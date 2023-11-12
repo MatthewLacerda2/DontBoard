@@ -10,6 +10,8 @@ obj/
 out/
 node_modules/
 npm-debug.log
+/.pnp
+.pnp.js
 
 # Ignore user-specific files
 *.suo
@@ -59,6 +61,7 @@ npm-debug.log
 npm-debug.log*
 
 # Ignore yarn error log
+yarn-debug.log*
 yarn-error.log*
 
 # Ignore local .env files

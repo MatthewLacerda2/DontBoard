@@ -1,5 +1,78 @@
-.App {
+.drop-area {
+  height:2000px;
+  border: 1px dashed #000;
+  padding: 24%;
   text-align: center;
+  margin: 0%;
+  background-color: #111111;
+}
+
+.board-button{
+  color:white;
+}
+
+.draggable-media {
+  cursor: grab;
+  height: auto;
+  display:block;
+  object-fit:cover;
+  min-width: 32px;
+  max-width: 4096px;
+  width: 40vw;
+}
+
+.draggable-audio {
+  font-family:'Open Sans';
+  text-align: left;
+  color:white;
+  cursor: grab;
+  width: 18vw;
+  height: 3.3vw;
+  display:block;
+  object-fit:cover;
+  min-width: 32px;
+  max-width: 1024px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-bottom: 5px;
+}
+
+.round-text {
+  font-family: 'Roboto', sans-serif;
+  font-size: 14px;
+  font-weight: bold;
+  color: black;
+  text-shadow:
+    -1px -1px 0 white,
+    1px -1px 0 white,
+    -1px 1px 0 white,
+    1px 1px 0 white
+}
+
+/* Reset default body margin and padding */
+body {
+  margin: 0;
+  padding: 0;
+  /* Add styles to cover the whole viewport */
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Style the drop area */
+#root {
+  width: 100%; /* Take the full width of the viewport */
+  height: 100vh; /* Take the full height of the viewport */
+  border: 2px dashed #ccc; /* Just an example border */
+  text-align: center; /* Center the content */
+}
+
+.App {
+  text-align: top center;
+  color: black;
 }
 
 .App-logo {
@@ -21,7 +94,7 @@
   align-items: center;
   justify-content: center;
   font-size: calc(10px + 2vmin);
-  color: white;
+  color: black;
 }
 
 .App-link {
