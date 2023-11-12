@@ -15,9 +15,12 @@ Perhaps PureRef is now part of Atwood's law
 
 ---
 
-How to start:
+How to run:
 
-As of right now all you need to do is run `npm start` at the 'front-end' folder
+At the first time, run `npm install typescript@latest`
+
+From then on, run `npm start` at the 'front-end' folder
+
 You'll need *NodeJs* and *TypeScript* installed, naturally
 
 ---
