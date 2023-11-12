@@ -40,3 +40,5 @@ Either put the website online via a cloud service or making a home server
 At first, all webpages will be public, just like in DontPad.com. Meaning, your created page can be tempered with by someone else but hey, never look a gift horse in the mouth
 I'm thinking of letting users create accounts to make webpages with Authentication and Authorization, but thats for later
 Besides, there's also the question of storage size
+
+NOTE: I concepted this as a web app and have no intention to make a standalone app whatsoever
