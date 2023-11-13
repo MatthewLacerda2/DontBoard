@@ -1,8 +1,16 @@
 import React, { useState } from 'react';
 import Scaler from './Scaler';
-import { DndMediaProps } from './DndBoard';
 
-const DndImage: React.FC<DndMediaProps> = ({ src, name, style, isSelected, onMouseDown, onClick }) => {
+interface DndImageProps {
+  src: string;
+  name: string;
+  style: React.CSSProperties;
+  isSelected: boolean;
+  onMouseDown: (e: React.MouseEvent<HTMLDivElement>) => void;
+  onClick: () => void;
+}
+
+const DndImage: React.FC<DndImageProps> = ({ src, name, style, isSelected, onMouseDown, onClick }) => {
   const [width, setWidth] = useState<number>(style.width as number);
   const [height, setHeight] = useState<number>(style.height as number);
 
@@ -19,7 +27,7 @@ const DndImage: React.FC<DndMediaProps> = ({ src, name, style, isSelected, onMou
         onClick={onClick}
         style={{ ...style, width, height }}
       >
-        <img src={src} alt={name} className="draggable-media" />
+        <img src={src} alt={name} className="draggable-media" style={{ width: '100%', height: '100%' }} />
       </div>
     </Scaler>
   );
