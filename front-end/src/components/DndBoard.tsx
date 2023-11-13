@@ -2,8 +2,16 @@ import React, { useEffect, useState, CSSProperties } from 'react';
 import DndImage from './DndImage';
 import DndVideo from './DndVideo';
 import DndAudio from './DndAudio';
-import ButtonUpload from './ButtonUpload';
 import '../App.css';
+
+interface DndMediaProps {
+  name: string;
+  src: string;
+  style: CSSProperties;
+  isSelected: boolean;
+  onMouseDown: (e: React.MouseEvent<HTMLDivElement>) => void;
+  onClick: () => void;
+}
 
 interface MediaItem {
   type: 'image' | 'video' | 'audio' | 'text';
@@ -148,6 +156,7 @@ const DndBoard: React.FC = () => {
           <DndImage
             key={index}
             src={item.src}
+            name={item.name}
             style={style}
             isSelected={isSelected}
             onMouseDown={(e) => handleMouseDown(e, index)}
@@ -157,6 +166,7 @@ const DndBoard: React.FC = () => {
           <DndVideo
             key={index}
             src={item.src}
+            name={item.name}
             style={style}
             isSelected={isSelected}
             onMouseDown={(e) => handleMouseDown(e, index)}
@@ -179,4 +189,4 @@ const DndBoard: React.FC = () => {
 };
 
 export default DndBoard;
-export { MediaItem, MediaPosition };
+export { MediaItem, MediaPosition, DndMediaProps };
