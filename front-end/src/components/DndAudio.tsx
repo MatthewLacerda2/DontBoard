@@ -1,15 +1,7 @@
-import React, { CSSProperties } from 'react';
+import React from 'react';
+import { DndMediaProps } from './DndBoard';
 
-interface DndAudioProps {
-  name: string;
-  src: string;
-  style: CSSProperties;
-  isSelected: boolean;
-  onMouseDown: (e: React.MouseEvent<HTMLDivElement>) => void;
-  onClick: () => void;
-}
-
-const DndAudio: React.FC<DndAudioProps> = ({ src, name, style, isSelected, onMouseDown, onClick }) => (
+const DndAudio: React.FC<DndMediaProps> = ({ src, name, style, isSelected, onMouseDown, onClick }) => (
   
   <div
     className={`draggable-audio ${isSelected ? 'selected' : ''}`}
