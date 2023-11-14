@@ -2,13 +2,14 @@ import React, { useEffect, useState, CSSProperties } from 'react';
 import DndImage from './DndImage';
 import DndVideo from './DndVideo';
 import DndAudio from './DndAudio';
-import ButtonUpload from './ButtonUpload';
+import DndText from './DndText';
 import '../App.css';
 
 interface MediaItem {
   type: 'image' | 'video' | 'audio' | 'text';
   src: string;
   name: string;
+  text?: string;
 }
 
 interface MediaPosition {
@@ -74,7 +75,17 @@ const DndBoard: React.FC = () => {
       };
       setPositions(updatedPositions);
     }
+  };    
+
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
   };
+
+  const handleTextChange = (index: number, newText: string) => {
+    const updatedMedia = [...media];
+    updatedMedia[index].text = newText;
+    setMedia(updatedMedia);
+  };  
 
   const handleDrop = (eve: React.DragEvent<HTMLDivElement>) => {
     eve.preventDefault();
@@ -82,17 +93,16 @@ const DndBoard: React.FC = () => {
     const files = eve.dataTransfer.files;
   
     for (let i = 0; i < files.length; i++) {
-
       const file = files[i];
-      const maxSize = 1024 * 1024 * 24; //That's 24Mb
-
+      const maxSize = 1024 * 1024 * 24; // 24MB
+  
       if (file.size > maxSize) {
-        console.warn('File size exceeds 32MB:', file.name);
+        console.warn('File size exceeds 24MB:', file.name);
         continue;
       }
   
       let type: MediaItem['type'];
-      const defaultPosition: MediaPosition = {x: 0, y: 0 };
+      const defaultPosition: MediaPosition = { x: 0, y: 0 };
   
       if (file.type.startsWith('image/')) {
         type = 'image';
@@ -103,25 +113,39 @@ const DndBoard: React.FC = () => {
         type = 'video';
       } else if (file.type === 'text/plain') {
         type = 'text';
+        // Read the text content of the text file
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          const textContent = event.target?.result as string;
+          const newItem: MediaItem = {
+            type,
+            src: URL.createObjectURL(file),
+            name: file.name,
+            text: textContent,
+          };
+  
+          setMedia((prevMedia) => [...prevMedia, newItem]);
+          setPositions([...positions, defaultPosition]);
+          setInitialPositions([...initialPositions, defaultPosition]);
+        };
+        reader.readAsText(file);
       } else {
         console.warn('Unsupported file format:', file.name);
         continue;
       }
   
-      const newItem: MediaItem = {
-        type,
-        src: URL.createObjectURL(file),
-        name: file.name
-      };
+      if (type !== 'text') {
+        const newItem: MediaItem = {
+          type,
+          src: URL.createObjectURL(file),
+          name: file.name,
+        };
   
-      setMedia((prevMedia) => [...prevMedia, newItem]);
-      setPositions([...positions, defaultPosition]);
-      setInitialPositions([...initialPositions, defaultPosition]);
+        setMedia((prevMedia) => [...prevMedia, newItem]);
+        setPositions([...positions, defaultPosition]);
+        setInitialPositions([...initialPositions, defaultPosition]);
+      }
     }
-  };
-
-  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
   };
 
   return (
@@ -162,7 +186,7 @@ const DndBoard: React.FC = () => {
             onMouseDown={(e) => handleMouseDown(e, index)}
             onClick={() => handleMediaClick(index)}
           />
-        ) : (
+        ) : item.type === 'audio' ?  (
           <DndAudio
             key={index}
             src={item.src}
@@ -171,6 +195,15 @@ const DndBoard: React.FC = () => {
             isSelected={isSelected}
             onMouseDown={(e) => handleMouseDown(e, index)}
             onClick={() => handleMediaClick(index)}
+          />
+        ) : (
+          <DndText
+            key={index}
+            text={item.text || ''}
+            style={style}
+            isSelected={isSelected}
+            onMouseDown={(e) => handleMouseDown(e, index)}
+            onTextChange={(newText) => handleTextChange(index, newText)}
           />
         );
       })}
