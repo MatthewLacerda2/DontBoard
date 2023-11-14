@@ -15,12 +15,14 @@ const DndText: React.FC<DndTextProps> = ({ text, style, isSelected, onMouseDown,
     style={style}
   >
     <textarea
-        value={text}
-        onChange={(e: ChangeEvent<HTMLTextAreaElement>) => onTextChange(e.target.value)}
-        placeholder="Type your text here"
-        className="draggable-media-text"
+      value={text}
+      onChange={(e: ChangeEvent<HTMLTextAreaElement>) => onTextChange(e.target.value)}
+      placeholder="Type your text here"
+      className="draggable-media-text"
     />
-
+    {isSelected && (
+      <div className="resize-handle" onMouseDown={(e) => e.stopPropagation()} />
+    )}
   </div>
 );
 
