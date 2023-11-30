@@ -182,6 +182,11 @@ const DndBoard: React.FC = () => {
       onMouseUp={handleMouseUp}
       onMouseMove={handleMouseMove}
     >
+
+    {media.length === 0 && (
+      <p className='fluctuating-text'>Drag and drop your images here</p>
+    )}
+
       {media.map((item, index) => {
         const isSelected = selected === index;
 
