@@ -1,5 +1,6 @@
 .drop-area {
-  height:2000px;
+  height:100vh;
+  overflow: hidden;
   border: 1px dashed #000;
   padding: 24%;
   text-align: center;
