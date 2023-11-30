@@ -194,35 +194,29 @@ const DndBoard: React.FC = () => {
           padding: '12px'
         };
 
+        const dndMedia: DndMediaProps = {
+            name:item.name,
+            src:item.src,
+            style:style,
+            isSelected:isSelected,
+            onMouseDown:(e) => handleMouseDown(e, index),
+            onClick:() => handleMediaClick(index)
+        };
+
         return item.type === 'image' ? (
           <DndImage
             key={index}
-            src={item.src}
-            name={item.name}
-            style={style}
-            isSelected={isSelected}
-            onMouseDown={(e) => handleMouseDown(e, index)}
-            onClick={() => handleMediaClick(index)}
+            {...dndMedia}
           />
         ) : item.type === 'video' ? (
           <DndVideo
             key={index}
-            src={item.src}
-            name={item.name}
-            style={style}
-            isSelected={isSelected}
-            onMouseDown={(e) => handleMouseDown(e, index)}
-            onClick={() => handleMediaClick(index)}
+            {...dndMedia}
           />
         ) : item.type === 'audio' ?  (
           <DndAudio
             key={index}
-            src={item.src}
-            name={item.name}
-            style={style}
-            isSelected={isSelected}
-            onMouseDown={(e) => handleMouseDown(e, index)}
-            onClick={() => handleMediaClick(index)}
+            {...dndMedia}
           />
         ) : (
           <DndText

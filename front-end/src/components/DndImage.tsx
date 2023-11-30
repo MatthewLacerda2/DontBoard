@@ -1,16 +1,8 @@
 import React, { useState } from 'react';
 import Scaler from './Scaler';
+import { DndMediaProps } from './DndBoard';
 
-interface DndImageProps {
-  src: string;
-  name: string;
-  style: React.CSSProperties;
-  isSelected: boolean;
-  onMouseDown: (e: React.MouseEvent<HTMLDivElement>) => void;
-  onClick: () => void;
-}
-
-const DndImage: React.FC<DndImageProps> = ({ src, name, style, isSelected, onMouseDown, onClick }) => {
+const DndImage: React.FC<DndMediaProps> = ({ src, name, style, isSelected, onMouseDown, onClick }) => {
   const [width, setWidth] = useState<number>(style.width as number);
   const [height, setHeight] = useState<number>(style.height as number);
 
