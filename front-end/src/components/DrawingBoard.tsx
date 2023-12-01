@@ -1,8 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import './DrawingBoard.css';
 
-const DrawingBoard: React.FC = () => {
-
+const DrawingBoard: React.FC<{ dimensions: { width: number; height: number } }> = ({ dimensions }) => {
   const [drawing, setDrawing] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const contextRef = useRef<CanvasRenderingContext2D | null>(null);
@@ -15,6 +13,7 @@ const DrawingBoard: React.FC = () => {
         contextRef.current = context;
         context.lineCap = 'round';
         context.lineWidth = 5;
+        context.strokeStyle = 'purple'; // Set initial draw color to white
       }
     }
   }, []);
@@ -33,7 +32,6 @@ const DrawingBoard: React.FC = () => {
 
     const context = contextRef.current;
     if (context) {
-      context.strokeStyle='white';
       context.lineTo(event.nativeEvent.offsetX, event.nativeEvent.offsetY);
       context.stroke();
     }
@@ -50,7 +48,6 @@ const DrawingBoard: React.FC = () => {
   return (
     <canvas
       ref={canvasRef}
-      className="drawing-board"
       onMouseDown={startDrawing}
       onMouseMove={draw}
       onMouseUp={stopDrawing}

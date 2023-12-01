@@ -27,6 +27,7 @@ const DndBoard: React.FC = () => {
   const [selected, setSelected] = useState<number | null>(null);
 
   const [drawingMode, setDrawingMode] = useState(false);
+  const [dimensions, setDimensions] = useState({ width: window.innerWidth, height: window.innerHeight });
 
   const handleDelete = (event: KeyboardEvent) => {
     if (event.key === 'Delete' && selected !== null) {
@@ -215,7 +216,7 @@ const DndBoard: React.FC = () => {
         );
       })}
 
-      {drawingMode&&<DrawingBoard/>}
+      {drawingMode && <DrawingBoard dimensions={{ width: window.innerWidth, height: window.innerHeight }} />}
       <button onClick={handleDrawingToggle}>Toggle Drawing</button>
     </div>
   );

@@ -1,9 +1,9 @@
-// components/ButtonDraw.tsx
+// ButtonDraw.tsx
 
 import React, { useState } from 'react';
 import DrawingBoard from './DrawingBoard';
 
-const ButtonDraw: React.FC = () => {
+const ButtonDraw: React.FC<{ dimensions: { width: number; height: number } }> = ({ dimensions }) => {
   const [drawingMode, setDrawingMode] = useState(false);
 
   const toggleDrawingMode = () => {
@@ -13,7 +13,7 @@ const ButtonDraw: React.FC = () => {
   return (
     <div>
       <button onClick={toggleDrawingMode}>Toggle Drawing</button>
-      {drawingMode && <DrawingBoard />}
+      {drawingMode && <DrawingBoard dimensions={dimensions} />}
     </div>
   );
 };
