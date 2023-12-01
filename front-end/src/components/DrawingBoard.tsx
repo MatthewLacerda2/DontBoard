@@ -13,7 +13,7 @@ const DrawingBoard: React.FC<{ dimensions: { width: number; height: number } }> 
         contextRef.current = context;
         context.lineCap = 'round';
         context.lineWidth = 5;
-        context.strokeStyle = 'purple'; // Set initial draw color to white
+        context.strokeStyle = 'white'; // Set initial draw color to white
       }
     }
   }, []);
@@ -39,21 +39,18 @@ const DrawingBoard: React.FC<{ dimensions: { width: number; height: number } }> 
 
   const stopDrawing = () => {
     setDrawing(false);
-    const context=contextRef.current;
-    if(context){
-      context.closePath();
-    }
   };
 
   return (
     <canvas
       ref={canvasRef}
+      className="drawing-board"
       onMouseDown={startDrawing}
       onMouseMove={draw}
       onMouseUp={stopDrawing}
       onMouseOut={stopDrawing}
-      width={window.innerWidth}
-      height={window.innerHeight}
+      width={dimensions.width}
+      height={dimensions.height}
     />
   );
 };
