@@ -36,18 +36,21 @@
 
 @keyframes fluctuateOpacity {
   0% {
-    opacity: 0.6;
+    color: grey;
   }
-  50% {
-    opacity: 1;
+  15%{
+    color: white;
+  }
+  40% {
+    color: white;
   }
   100% {
-    opacity: 0.6;
+    color: grey;
   }
 }
 
 .fluctuating-text {
-  animation: fluctuateOpacity 2s infinite;
+  animation: fluctuateOpacity 5s infinite;
   color: white;
   outline: none;
   position: absolute;
