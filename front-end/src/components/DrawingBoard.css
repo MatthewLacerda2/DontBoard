@@ -1,0 +1,7 @@
+/* components/DrawingBoard.css */
+
+.drawing-board {
+    border: 1px solid #ccc;
+    cursor: crosshair;
+  }
+  

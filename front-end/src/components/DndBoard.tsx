@@ -4,6 +4,7 @@ import DndVideo from './DndVideo';
 import DndAudio from './DndAudio';
 import DndText from './DndText';
 import '../App.css';
+import DrawingBoard from './DrawingBoard';
 
 interface MediaItem {
   type: 'image' | 'video' | 'audio' | 'text';
@@ -25,6 +26,8 @@ const DndBoard: React.FC = () => {
   const [initialPositions, setInitialPositions] = useState<MediaPosition[]>([]);
   const [selected, setSelected] = useState<number | null>(null);
 
+  const [drawingMode, setDrawingMode] = useState(false);
+
   const handleDelete = (event: KeyboardEvent) => {
     if (event.key === 'Delete' && selected !== null) {
       setMedia((prevMedia) => prevMedia.filter((_, index) => index !== selected));
@@ -32,6 +35,10 @@ const DndBoard: React.FC = () => {
       setInitialPositions((prevInitialPositions) => prevInitialPositions.filter((_, index) => index !== selected));
       setSelected(null);
     }
+  };
+
+  const handleDrawingToggle = () => {
+    setDrawingMode(!drawingMode);
   };
 
   useEffect(() => {
@@ -207,6 +214,9 @@ const DndBoard: React.FC = () => {
           />
         );
       })}
+
+      {drawingMode&&<DrawingBoard/>}
+      <button onClick={handleDrawingToggle}>Toggle Drawing</button>
     </div>
   );
 };
