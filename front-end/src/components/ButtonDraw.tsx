@@ -7,7 +7,7 @@ const ButtonDraw: React.FC<{ dimensions: { width: number; height: number } }> = 
   return (
     <div>
       <button onClick={() => setDrawingMode(!drawingMode)}>Toggle Drawing</button>
-      {drawingMode && <DrawingBoard dimensions={dimensions} />}
+      {drawingMode && <DrawingBoard dimensions={dimensions} drawingMode={drawingMode} />}
     </div>
   );
 };

@@ -1,6 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-const DrawingBoard: React.FC<{ dimensions: { width: number; height: number } }> = ({ dimensions }) => {
+interface DrawingBoardProps {
+  dimensions: { width: number; height: number };
+  style?: React.CSSProperties;
+  drawingMode: boolean; // Add this line
+}
+
+const DrawingBoard: React.FC<DrawingBoardProps> = ({ dimensions, style, drawingMode }) => {
   const [drawing, setDrawing] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const contextRef = useRef<CanvasRenderingContext2D | null>(null);
@@ -51,6 +57,10 @@ const DrawingBoard: React.FC<{ dimensions: { width: number; height: number } }> 
       onMouseOut={stopDrawing}
       width={dimensions.width}
       height={dimensions.height}
+      style={{
+        ...style,
+        pointerEvents: drawingMode ? 'auto' : 'none', // Adjust pointerEvents conditionally
+      }}
     />
   );
 };
