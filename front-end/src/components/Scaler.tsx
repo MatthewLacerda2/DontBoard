@@ -16,7 +16,7 @@ interface ScalerProps {
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
-        if (resizing && containerRef.current) {
+        if (resizing && containerRef.current && e.shiftKey ) {
           const deltaX = e.clientX - startX;
           const deltaY = e.clientY - startY;
       
