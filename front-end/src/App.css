@@ -71,7 +71,18 @@
   right: 0px;
   cursor: se-resize;
   background-color: #3498db;
+  
+.resize-handle {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  bottom: 0px;
+  right: 0px;
+  cursor: se-resize;
+  background-color: #3498db;
 }
+
+
 
 .draggable-audio {
   font-family:'Open Sans';
