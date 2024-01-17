@@ -5,6 +5,15 @@ import DndAudio from './DndAudio';
 import DndText from './DndText';
 import '../App.css';
 
+interface DndMediaProps {
+  name: string;
+  src: string;
+  style: CSSProperties;
+  isSelected: boolean;
+  onMouseDown: (e: React.MouseEvent<HTMLDivElement>) => void;
+  onClick: () => void;
+}
+
 interface MediaItem {
   type: 'image' | 'video' | 'audio' | 'text';
   src: string;
@@ -25,22 +34,33 @@ const DndBoard: React.FC = () => {
   const [initialPositions, setInitialPositions] = useState<MediaPosition[]>([]);
   const [selected, setSelected] = useState<number | null>(null);
 
-  const handleDelete = (event: KeyboardEvent) => {
-    if (event.key === 'Delete' && selected !== null) {
-      setMedia((prevMedia) => prevMedia.filter((_, index) => index !== selected));
-      setPositions((prevPositions) => prevPositions.filter((_, index) => index !== selected));
-      setInitialPositions((prevInitialPositions) => prevInitialPositions.filter((_, index) => index !== selected));
-      setSelected(null);
-    }
-  };
-
   useEffect(() => {
+    const handleDelete = (event: KeyboardEvent) => {
+      if (event.key === 'Delete' && selected !== null) {
+        setMedia((prevMedia) => prevMedia.filter((_, index) => index !== selected));
+        setPositions((prevPositions) => prevPositions.filter((_, index) => index !== selected));
+        setInitialPositions((prevInitialPositions) => prevInitialPositions.filter((_, index) => index !== selected));
+        setSelected(null);
+      }
+    };
+  
+    const handleDocumentClick = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+  
+      // Check if the clicked element is outside the selected item
+      if (selected !== null && !target.closest('.draggable-media')) {
+        setSelected(null);
+      }
+    };
+  
     document.addEventListener('keydown', handleDelete);
-
+    document.addEventListener('click', handleDocumentClick);
+  
     return () => {
       document.removeEventListener('keydown', handleDelete);
+      document.removeEventListener('click', handleDocumentClick);
     };
-  });
+  }, [selected]);  
 
   const handleMediaClick = (index: number) => {
     setSelected(index);
@@ -68,6 +88,8 @@ const DndBoard: React.FC = () => {
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (dragging !== null) {
+      e.preventDefault();
+
       const updatedPositions = [...positions];
       updatedPositions[dragging] = {
         x: e.clientX - initialPositions[dragging].x,
@@ -89,6 +111,10 @@ const DndBoard: React.FC = () => {
 
   const handleDrop = (eve: React.DragEvent<HTMLDivElement>) => {
     eve.preventDefault();
+
+    if (dragging !== null) {
+      return;
+    }
   
     const files = eve.dataTransfer.files;
   
@@ -156,6 +182,11 @@ const DndBoard: React.FC = () => {
       onMouseUp={handleMouseUp}
       onMouseMove={handleMouseMove}
     >
+
+    {media.length === 0 && (
+      <p className='fluctuating-text'>Drag and drop your images here</p>
+    )}
+
       {media.map((item, index) => {
         const isSelected = selected === index;
 
@@ -168,33 +199,38 @@ const DndBoard: React.FC = () => {
           padding: '12px'
         };
 
+        const dndMedia: DndMediaProps = {
+            name:item.name,
+            src:item.src,
+            style:style,
+            isSelected:isSelected,
+            onMouseDown:(e) => handleMouseDown(e, index),
+            onClick:() => handleMediaClick(index)
+        };
+
         return item.type === 'image' ? (
           <DndImage
             key={index}
-            src={item.src}
-            style={style}
-            isSelected={isSelected}
-            onMouseDown={(e) => handleMouseDown(e, index)}
-            onClick={() => handleMediaClick(index)}
+            {...dndMedia}
           />
         ) : item.type === 'video' ? (
           <DndVideo
             key={index}
-            src={item.src}
-            style={style}
-            isSelected={isSelected}
-            onMouseDown={(e) => handleMouseDown(e, index)}
-            onClick={() => handleMediaClick(index)}
+            {...dndMedia}
           />
         ) : item.type === 'audio' ?  (
           <DndAudio
             key={index}
-            src={item.src}
-            name={item.name}
+            {...dndMedia}
+          />
+        ) : (
+          <DndText
+            key={index}
+            text={item.text || ''}
             style={style}
             isSelected={isSelected}
             onMouseDown={(e) => handleMouseDown(e, index)}
-            onClick={() => handleMediaClick(index)}
+            onTextChange={(newText) => handleTextChange(index, newText)}
           />
         ) : (
           <DndText
@@ -212,4 +248,4 @@ const DndBoard: React.FC = () => {
 };
 
 export default DndBoard;
-export { MediaItem, MediaPosition };
+export { MediaItem, MediaPosition, DndMediaProps };

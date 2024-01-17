@@ -1,14 +1,7 @@
-import React, { CSSProperties } from 'react';
+import React from 'react';
+import { DndMediaProps } from './DndBoard';
 
-interface DndVideoProps {
-  src: string;
-  style: CSSProperties;
-  isSelected: boolean;
-  onMouseDown: (e: React.MouseEvent<HTMLDivElement>) => void;
-  onClick: () => void;
-}
-
-const DndVideo: React.FC<DndVideoProps> = ({ src, style, isSelected, onMouseDown, onClick }) => (
+const DndVideo: React.FC<DndMediaProps> = ({ src, name, style, isSelected, onMouseDown, onClick }) => (
   <div
     className={`draggable-media ${isSelected ? 'selected' : ''}`}
     onMouseDown={onMouseDown}
