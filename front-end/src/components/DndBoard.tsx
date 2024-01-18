@@ -119,7 +119,6 @@ const DndBoard: React.FC = () => {
       } else if (file.type === 'text/plain') {
 
         type = 'text';
-        // Read the text content of the text file
         const reader = new FileReader();
         reader.onload = (event) => {
           const textContent = event.target?.result as string;
@@ -223,19 +222,27 @@ const DndBoard: React.FC = () => {
         );
       })}
 
-      {drawingMode && (
-        <DrawingBoard
-          dimensions={{ width: window.innerWidth, height: window.innerHeight }}
-          style={{ position: 'absolute', zIndex: 2 }} // Set a higher z-index for drawing elements
-          drawingMode={drawingMode}
-        />
-      )}
+      <DrawingBoard
+        dimensions={{ width: window.innerWidth, height: window.innerHeight }}
+        style={{ position: 'absolute', top: 0, left: 0, zIndex: 2 }}
+        drawingMode={drawingMode}
+      />
       
       <button
         onClick={handleDrawingToggle}
-        style={{ position: 'absolute', zIndex: 3, /* Add any other styles you need */ }}
+        style={{
+          position: 'absolute', top: 8, right: 80,
+          zIndex: 3,
+          padding: '8px 14px',
+          backgroundColor: drawingMode ? '#ff5b5b' : '#444444',
+          color: '#ffffff',
+          border: 'none',
+          borderRadius: '5px',
+          fontWeight: 'bold',
+          cursor: 'pointer',
+        }}
       >
-        Toggle Drawing
+        {drawingMode ? 'Draw ON' : 'Draw OFF'}
       </button>
 
     </div>

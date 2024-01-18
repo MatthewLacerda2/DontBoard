@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 interface DrawingBoardProps {
   dimensions: { width: number; height: number };
   style?: React.CSSProperties;
-  drawingMode: boolean; // Add this line
+  drawingMode: boolean;
 }
 
 const DrawingBoard: React.FC<DrawingBoardProps> = ({ dimensions, style, drawingMode }) => {
@@ -19,7 +19,7 @@ const DrawingBoard: React.FC<DrawingBoardProps> = ({ dimensions, style, drawingM
         contextRef.current = context;
         context.lineCap = 'round';
         context.lineWidth = 5;
-        context.strokeStyle = 'white'; // Set initial draw color to white
+        context.strokeStyle = 'white';
       }
     }
   }, []);
@@ -59,7 +59,7 @@ const DrawingBoard: React.FC<DrawingBoardProps> = ({ dimensions, style, drawingM
       height={dimensions.height}
       style={{
         ...style,
-        pointerEvents: drawingMode ? 'auto' : 'none', // Adjust pointerEvents conditionally
+        pointerEvents: drawingMode ? 'auto' : 'none',
       }}
     />
   );
