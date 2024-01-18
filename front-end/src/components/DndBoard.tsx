@@ -3,6 +3,7 @@ import DndImage from './DndImage';
 import DndVideo from './DndVideo';
 import DndAudio from './DndAudio';
 import DndText from './DndText';
+import DrawingBoard from './DrawingBoard';
 import '../App.css';
 
 interface MediaItem {
@@ -21,9 +22,14 @@ const DndBoard: React.FC = () => {
   
   const [media, setMedia] = useState<MediaItem[]>([]);
   const [positions, setPositions] = useState<MediaPosition[]>([]);
-  const [dragging, setDragging] = useState<number | null>(null);
   const [initialPositions, setInitialPositions] = useState<MediaPosition[]>([]);
+  const [dragging, setDragging] = useState<number | null>(null);
   const [selected, setSelected] = useState<number | null>(null);
+
+  const [drawingMode, setDrawingMode] = useState(false);
+  const [dimensions, setDimensions] = useState({ width: window.innerWidth, height: window.innerHeight });
+
+  const [isInteractable, setIsInteractable] = useState(true);
 
   const handleDelete = (event: KeyboardEvent) => {
     if (event.key === 'Delete' && selected !== null) {
@@ -32,6 +38,11 @@ const DndBoard: React.FC = () => {
       setInitialPositions((prevInitialPositions) => prevInitialPositions.filter((_, index) => index !== selected));
       setSelected(null);
     }
+  };
+
+  const handleDrawingToggle = () => {
+    setDrawingMode(!drawingMode);
+    setIsInteractable((prev) => !prev);
   };
 
   useEffect(() => {
@@ -81,12 +92,6 @@ const DndBoard: React.FC = () => {
     e.preventDefault();
   };
 
-  const handleTextChange = (index: number, newText: string) => {
-    const updatedMedia = [...media];
-    updatedMedia[index].text = newText;
-    setMedia(updatedMedia);
-  };  
-
   const handleDrop = (eve: React.DragEvent<HTMLDivElement>) => {
     eve.preventDefault();
   
@@ -112,8 +117,8 @@ const DndBoard: React.FC = () => {
       } else if (file.type.startsWith('video/')) {
         type = 'video';
       } else if (file.type === 'text/plain') {
+
         type = 'text';
-        // Read the text content of the text file
         const reader = new FileReader();
         reader.onload = (event) => {
           const textContent = event.target?.result as string;
@@ -129,6 +134,7 @@ const DndBoard: React.FC = () => {
           setInitialPositions([...initialPositions, defaultPosition]);
         };
         reader.readAsText(file);
+
       } else {
         console.warn('Unsupported file format:', file.name);
         continue;
@@ -148,6 +154,12 @@ const DndBoard: React.FC = () => {
     }
   };
 
+  const handleTextChange = (index: number, newText: string) => {
+    const updatedMedia = [...media];
+    updatedMedia[index].text = newText;
+    setMedia(updatedMedia);
+  };
+
   return (
     <div
       className="drop-area"
@@ -165,7 +177,9 @@ const DndBoard: React.FC = () => {
           top: positions[index]?.y || 0,
           cursor: dragging === index ? 'grabbing' : 'grab',
           border: isSelected ? '1px solid purple' : 'none',
-          padding: '12px'
+          padding: '12px',
+          pointerEvents: isInteractable ? 'auto' : 'none', // Use pointer-events property
+          zIndex: 1,
         };
 
         return item.type === 'image' ? (
@@ -186,7 +200,7 @@ const DndBoard: React.FC = () => {
             onMouseDown={(e) => handleMouseDown(e, index)}
             onClick={() => handleMediaClick(index)}
           />
-        ) : item.type === 'audio' ?  (
+        ) : item.type === 'audio' ? (
           <DndAudio
             key={index}
             src={item.src}
@@ -207,6 +221,30 @@ const DndBoard: React.FC = () => {
           />
         );
       })}
+
+      <DrawingBoard
+        dimensions={{ width: window.innerWidth, height: window.innerHeight }}
+        style={{ position: 'absolute', top: 0, left: 0, zIndex: 2 }}
+        drawingMode={drawingMode}
+      />
+      
+      <button
+        onClick={handleDrawingToggle}
+        style={{
+          position: 'absolute', top: 8, right: 80,
+          zIndex: 3,
+          padding: '8px 14px',
+          backgroundColor: drawingMode ? '#ff5b5b' : '#444444',
+          color: '#ffffff',
+          border: 'none',
+          borderRadius: '5px',
+          fontWeight: 'bold',
+          cursor: 'pointer',
+        }}
+      >
+        {drawingMode ? 'Draw ON' : 'Draw OFF'}
+      </button>
+
     </div>
   );
 };
