@@ -6,6 +6,7 @@ import DndText from './DndText';
 import { isValidYoutubeLink } from './youtubeUtils.ts';
 import DrawingBoard from './DrawingBoard';
 import '../App.css';
+import InputYoutube from './InputYoutube.tsx';
 //How many imports? //Yes
 
 interface MediaItem {
@@ -84,6 +85,21 @@ const DndBoard: React.FC = () => {
     e.preventDefault();
   };
 
+  const handleYoutubeLink = (link: string) => {
+    const type: MediaItem['type'] = 'youtube';
+    const defaultPosition: MediaPosition = { x: 0, y: 0 };
+  
+    const newItem: MediaItem = {
+      type,
+      src: link,
+      name: 'YouTube Video', // You can customize the name as needed
+    };
+  
+    setMedia((prevMedia) => [...prevMedia, newItem]);
+    setPositions([...positions, defaultPosition]);
+    setInitialPositions([...initialPositions, defaultPosition]);
+  };
+
   const handleDrop = (eve: React.DragEvent<HTMLDivElement>) => {
 
     eve.preventDefault();
@@ -91,6 +107,7 @@ const DndBoard: React.FC = () => {
     const files = eve.dataTransfer.files;
   
     for (let i = 0; i < files.length; i++) {
+
       const file = files[i];
       const maxSize = 1024 * 1024 * 24; // 24MB
   
@@ -126,6 +143,7 @@ const DndBoard: React.FC = () => {
           setPositions([...positions, defaultPosition]);
           setInitialPositions([...initialPositions, defaultPosition]);
         };
+
         reader.readAsText(file);
 
         return;
@@ -254,6 +272,8 @@ const DndBoard: React.FC = () => {
       >
         {drawingMode ? 'Draw ON' : 'Draw OFF'}
       </button>
+
+      <InputYoutube onLinkSubmit={handleYoutubeLink} />
     </div>
   );
 };
