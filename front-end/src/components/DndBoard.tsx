@@ -3,7 +3,7 @@ import DndImage from './DndImage';
 import DndVideo from './DndVideo';
 import DndAudio from './DndAudio';
 import DndText from './DndText';
-import { isValidYoutubeLink } from './youtubeUtils.ts';
+import { isValidYoutubeLink } from './youtubeUtils.tsx';
 import DrawingBoard from './DrawingBoard';
 import '../App.css';
 import InputYoutube from './InputYoutube.tsx';

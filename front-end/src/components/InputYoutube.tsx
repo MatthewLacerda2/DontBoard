@@ -1,5 +1,5 @@
 import React, { useState, useRef, ChangeEvent, KeyboardEvent } from 'react';
-import { isValidYoutubeLink } from './youtubeUtils.ts';
+import { isValidYoutubeLink } from './youtubeUtils.tsx';
 import './InputYoutube.css'
 
 interface InputYoutubeProps {
