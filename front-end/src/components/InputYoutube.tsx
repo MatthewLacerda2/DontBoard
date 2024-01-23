@@ -19,12 +19,13 @@ const InputYoutube: React.FC<InputYoutubeProps> = ({ onLinkSubmit }) => {
 
   const handleKeyPress = (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter' || event.keyCode === 13) {
-        
+      
       if (isValidYoutubeLink(inputValue)) {
         onLinkSubmit(inputValue);
         setInputValue('');
-
+        
       } else {
+        
         setIsValidLink(false);
         setTimeout(() => {
           setIsValidLink(true);

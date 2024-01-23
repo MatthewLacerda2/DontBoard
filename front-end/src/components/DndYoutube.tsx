@@ -16,7 +16,7 @@ const DndYouTube: React.FC<DndYouTubeProps> = ({ videoUrl, style, isSelected, on
         return match ? match[1] : null;
     };
 
-    const videoId = getYouTubeVideoId(videoUrl);
+    const videoId = getYouTubeVideoId(videoUrl) ?? undefined;
     const youtubePlayerRef = useRef<any>(null);
 
     return (

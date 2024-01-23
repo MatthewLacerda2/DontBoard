@@ -7,6 +7,7 @@ import { isValidYoutubeLink } from './youtubeUtils.tsx';
 import DrawingBoard from './DrawingBoard';
 import '../App.css';
 import InputYoutube from './InputYoutube.tsx';
+import DndYouTube from './DndYoutube.tsx';
 //How many imports? //Yes
 
 interface MediaItem {
@@ -118,7 +119,7 @@ const DndBoard: React.FC = () => {
   
       let type: MediaItem['type'];
       const defaultPosition: MediaPosition = { x: 0, y: 0 };
-
+      console.log("bugabugabuga");
       if (file.type === 'text/plain') {
 
         const reader = new FileReader();
@@ -130,8 +131,9 @@ const DndBoard: React.FC = () => {
 
           if(isValidYoutubeLink(textContent)) {
             type='youtube';
+            console.log("debug is on");
           }
-
+          console.log("debug is the table");
           const newItem: MediaItem = {
             type,
             src: URL.createObjectURL(file),
@@ -238,7 +240,7 @@ const DndBoard: React.FC = () => {
             onMouseDown={(e) => handleMouseDown(e, index)}
             onClick={() => handleMediaClick(index)}
           />
-        ) : (
+        ) : item.type === 'text' ? (
           <DndText
             key={index}
             text={item.text || ''}
@@ -247,7 +249,16 @@ const DndBoard: React.FC = () => {
             onMouseDown={(e) => handleMouseDown(e, index)}
             onTextChange={(newText) => handleTextChange(index, newText)}
           />
-        );
+          ) : (
+            <DndYouTube
+              key={index}
+              videoUrl={item.text || ''}
+              style={style}
+              isSelected={isSelected}
+              onMouseDown={(e) => handleMouseDown(e, index)}
+              onClick={() => handleMediaClick(index)}
+            />
+          );
       })}
 
       <DrawingBoard
