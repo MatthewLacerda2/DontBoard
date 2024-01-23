@@ -27,23 +27,8 @@ const DndBoard: React.FC = () => {
   const [selected, setSelected] = useState<number | null>(null);
 
   const [drawingMode, setDrawingMode] = useState(false);
-  const [dimensions, setDimensions] = useState({ width: window.innerWidth, height: window.innerHeight });
 
   const [isInteractable, setIsInteractable] = useState(true);
-
-  const handleDelete = (event: KeyboardEvent) => {
-    if (event.key === 'Delete' && selected !== null) {
-      setMedia((prevMedia) => prevMedia.filter((_, index) => index !== selected));
-      setPositions((prevPositions) => prevPositions.filter((_, index) => index !== selected));
-      setInitialPositions((prevInitialPositions) => prevInitialPositions.filter((_, index) => index !== selected));
-      setSelected(null);
-    }
-  };
-
-  const handleDrawingToggle = () => {
-    setDrawingMode(!drawingMode);
-    setIsInteractable((prev) => !prev);
-  };
 
   useEffect(() => {
     document.addEventListener('keydown', handleDelete);
@@ -53,8 +38,9 @@ const DndBoard: React.FC = () => {
     };
   });
 
-  const handleMediaClick = (index: number) => {
-    setSelected(index);
+  const handleDrawingToggle = () => {
+    setDrawingMode(!drawingMode);
+    setIsInteractable((prev) => !prev);
   };
 
   const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>, index: number) => {
@@ -75,6 +61,10 @@ const DndBoard: React.FC = () => {
 
   const handleMouseUp = () => {
     setDragging(null);
+  };
+
+  const handleMediaClick = (index: number) => {
+    setSelected(index);
   };
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -151,6 +141,15 @@ const DndBoard: React.FC = () => {
         setPositions([...positions, defaultPosition]);
         setInitialPositions([...initialPositions, defaultPosition]);
       }
+    }
+  };
+
+  const handleDelete = (event: KeyboardEvent) => {
+    if (event.key === 'Delete' && selected !== null) {
+      setMedia((prevMedia) => prevMedia.filter((_, index) => index !== selected));
+      setPositions((prevPositions) => prevPositions.filter((_, index) => index !== selected));
+      setInitialPositions((prevInitialPositions) => prevInitialPositions.filter((_, index) => index !== selected));
+      setSelected(null);
     }
   };
 
