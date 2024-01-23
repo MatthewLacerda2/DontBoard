@@ -3,11 +3,13 @@ import DndImage from './DndImage';
 import DndVideo from './DndVideo';
 import DndAudio from './DndAudio';
 import DndText from './DndText';
+import { isValidYoutubeLink } from './youtubeUtils.ts';
 import DrawingBoard from './DrawingBoard';
 import '../App.css';
+//How many imports? //Yes
 
 interface MediaItem {
-  type: 'image' | 'video' | 'audio' | 'text';
+  type: 'image' | 'video' | 'audio' | 'text' | 'youtube';
   src: string;
   name: string;
   text?: string;
@@ -58,7 +60,7 @@ const DndBoard: React.FC = () => {
       },
     ]);
   };
-
+  
   const handleMouseUp = () => {
     setDragging(null);
   };
@@ -76,13 +78,14 @@ const DndBoard: React.FC = () => {
       };
       setPositions(updatedPositions);
     }
-  };    
+  };
 
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
   };
 
   const handleDrop = (eve: React.DragEvent<HTMLDivElement>) => {
+
     eve.preventDefault();
   
     const files = eve.dataTransfer.files;
@@ -98,20 +101,20 @@ const DndBoard: React.FC = () => {
   
       let type: MediaItem['type'];
       const defaultPosition: MediaPosition = { x: 0, y: 0 };
-  
-      if (file.type.startsWith('image/')) {
-        type = 'image';
-      } else if (file.type.startsWith('audio/')) {
-        type = 'audio';
-        defaultPosition.x = 40;
-      } else if (file.type.startsWith('video/')) {
-        type = 'video';
-      } else if (file.type === 'text/plain') {
 
-        type = 'text';
+      if (file.type === 'text/plain') {
+
         const reader = new FileReader();
+        type = 'text';
+
         reader.onload = (event) => {
+
           const textContent = event.target?.result as string;
+
+          if(isValidYoutubeLink(textContent)) {
+            type='youtube';
+          }
+
           const newItem: MediaItem = {
             type,
             src: URL.createObjectURL(file),
@@ -125,22 +128,30 @@ const DndBoard: React.FC = () => {
         };
         reader.readAsText(file);
 
+        return;
+      }
+  
+      if (file.type.startsWith('image/')) {
+        type = 'image';
+      } else if (file.type.startsWith('audio/')) {
+        type = 'audio';
+        defaultPosition.x = 40;
+      } else if (file.type.startsWith('video/')) {
+        type = 'video';
       } else {
         console.warn('Unsupported file format:', file.name);
         continue;
       }
   
-      if (type !== 'text') {
-        const newItem: MediaItem = {
-          type,
-          src: URL.createObjectURL(file),
-          name: file.name,
-        };
-  
-        setMedia((prevMedia) => [...prevMedia, newItem]);
-        setPositions([...positions, defaultPosition]);
-        setInitialPositions([...initialPositions, defaultPosition]);
-      }
+      const newItem: MediaItem = {
+        type,
+        src: URL.createObjectURL(file),
+        name: file.name,
+      };
+
+      setMedia((prevMedia) => [...prevMedia, newItem]);
+      setPositions([...positions, defaultPosition]);
+      setInitialPositions([...initialPositions, defaultPosition]);
     }
   };
 
@@ -243,7 +254,6 @@ const DndBoard: React.FC = () => {
       >
         {drawingMode ? 'Draw ON' : 'Draw OFF'}
       </button>
-
     </div>
   );
 };
