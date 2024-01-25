@@ -1,4 +1,4 @@
-import React, { CSSProperties, useEffect } from 'react';
+import React, { CSSProperties } from 'react';
 import YouTube from 'react-youtube';
 
 interface DndYouTubeProps {
@@ -17,10 +17,6 @@ const DndYouTube: React.FC<DndYouTubeProps> = ({ videoUrl, style, isSelected, on
     };
 
     const videoId = getYouTubeVideoId(videoUrl) ?? undefined;
-
-    useEffect(() => {
-      console.log("Video URL:", videoUrl);
-    }, [videoUrl]);
 
     return (
         <div
