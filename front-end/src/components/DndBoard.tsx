@@ -87,7 +87,7 @@ const DndBoard: React.FC = () => {
   };
 
   const handleYoutubeLink = (link: string) => {
-    console.log("handling");
+    
     const type: MediaItem['type'] = 'youtube';
     const defaultPosition: MediaPosition = { x: 0, y: 0 };
   
@@ -122,7 +122,7 @@ const DndBoard: React.FC = () => {
   
       let type: MediaItem['type'];
       const defaultPosition: MediaPosition = { x: 0, y: 0 };
-      console.log("bugabugabuga");
+      
       if (file.type === 'text/plain') {
 
         const reader = new FileReader();
@@ -131,13 +131,11 @@ const DndBoard: React.FC = () => {
         reader.onload = (event) => {
 
           const textContent = event.target?.result as string;
-          console.log("dropping");
+          
           if(isValidYoutubeLink(textContent)) {
-            console.log("droptube");
             type='youtube';
-            console.log("debug is on");
           }
-          console.log("debug is the table");
+          
           const newItem: MediaItem = {
             type,
             src: URL.createObjectURL(file),
