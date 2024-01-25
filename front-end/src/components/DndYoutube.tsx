@@ -1,4 +1,4 @@
-import React, { CSSProperties, useRef } from 'react';
+import React, { CSSProperties, useEffect } from 'react';
 import YouTube from 'react-youtube';
 
 interface DndYouTubeProps {
@@ -17,7 +17,10 @@ const DndYouTube: React.FC<DndYouTubeProps> = ({ videoUrl, style, isSelected, on
     };
 
     const videoId = getYouTubeVideoId(videoUrl) ?? undefined;
-    const youtubePlayerRef = useRef<any>(null);
+
+    useEffect(() => {
+      console.log("Video URL:", videoUrl);
+    }, [videoUrl]);
 
     return (
         <div
@@ -26,7 +29,7 @@ const DndYouTube: React.FC<DndYouTubeProps> = ({ videoUrl, style, isSelected, on
             onClick={onClick}
             style={style}
         >
-        <YouTube videoId={videoId} ref={youtubePlayerRef} opts={{ width: '100%', height: '100%' }} />
+        <YouTube videoId={videoId} opts={{ width: '640', height: '360' }} />
         </div>
     );
 };

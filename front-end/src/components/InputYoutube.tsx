@@ -19,23 +19,21 @@ const InputYoutube: React.FC<InputYoutubeProps> = ({ onLinkSubmit }) => {
 
   const handleKeyPress = (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter' || event.keyCode === 13) {
-      
       if (isValidYoutubeLink(inputValue)) {
         onLinkSubmit(inputValue);
         setInputValue('');
-        
       } else {
-        
         setIsValidLink(false);
         setTimeout(() => {
           setIsValidLink(true);
           if (inputRef.current) {
-            inputRef.current.focus(); // Keep focus on the input after validation message
+            inputRef.current.focus();
           }
-        }, 5000); // Reset after 5 seconds
+        }, 5000);
       }
     }
   };
+  
 
   return (
     <div className={`input-youtube ${isValidLink ? '' : 'invalid'}`}>

@@ -87,6 +87,7 @@ const DndBoard: React.FC = () => {
   };
 
   const handleYoutubeLink = (link: string) => {
+    console.log("handling");
     const type: MediaItem['type'] = 'youtube';
     const defaultPosition: MediaPosition = { x: 0, y: 0 };
   
@@ -94,12 +95,14 @@ const DndBoard: React.FC = () => {
       type,
       src: link,
       name: 'YouTube Video', // You can customize the name as needed
+      text: link
     };
   
     setMedia((prevMedia) => [...prevMedia, newItem]);
     setPositions([...positions, defaultPosition]);
     setInitialPositions([...initialPositions, defaultPosition]);
   };
+  
 
   const handleDrop = (eve: React.DragEvent<HTMLDivElement>) => {
 
@@ -128,8 +131,9 @@ const DndBoard: React.FC = () => {
         reader.onload = (event) => {
 
           const textContent = event.target?.result as string;
-
+          console.log("dropping");
           if(isValidYoutubeLink(textContent)) {
+            console.log("droptube");
             type='youtube';
             console.log("debug is on");
           }
@@ -198,6 +202,7 @@ const DndBoard: React.FC = () => {
       onMouseUp={handleMouseUp}
       onMouseMove={handleMouseMove}
     >
+
       {media.map((item, index) => {
         const isSelected = selected === index;
 
@@ -261,12 +266,8 @@ const DndBoard: React.FC = () => {
           );
       })}
 
-      <DrawingBoard
-        dimensions={{ width: window.innerWidth, height: window.innerHeight }}
-        style={{ position: 'absolute', top: 0, left: 0, zIndex: 2 }}
-        drawingMode={drawingMode}
-      />
-      
+      <InputYoutube onLinkSubmit={handleYoutubeLink} />
+
       <button
         onClick={handleDrawingToggle}
         style={{
@@ -284,7 +285,12 @@ const DndBoard: React.FC = () => {
         {drawingMode ? 'Draw ON' : 'Draw OFF'}
       </button>
 
-      <InputYoutube onLinkSubmit={handleYoutubeLink} />
+      <DrawingBoard
+        dimensions={{ width: window.innerWidth, height: window.innerHeight }}
+        style={{ position: 'absolute', top: 0, left: 0, zIndex: 2 }}
+        drawingMode={drawingMode}
+      />
+
     </div>
   );
 };
