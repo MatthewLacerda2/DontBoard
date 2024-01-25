@@ -232,15 +232,6 @@ const DndBoard: React.FC = () => {
             onMouseDown={(e) => handleMouseDown(e, index)}
             onTextChange={(newText) => handleTextChange(index, newText)}
           />
-        ) : (
-          <DndText
-            key={index}
-            text={item.text || ''}
-            style={style}
-            isSelected={isSelected}
-            onMouseDown={(e) => handleMouseDown(e, index)}
-            onTextChange={(newText) => handleTextChange(index, newText)}
-          />
         );
       })}
     </div>
