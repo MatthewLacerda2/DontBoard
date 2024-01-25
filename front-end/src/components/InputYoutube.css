@@ -1,0 +1,41 @@
+.input-youtube {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  width: 250px;
+  background-color: #333333;
+  border: 1px solid white;
+  border-radius: 6px;
+  padding: 5px;
+}
+
+.input-youtube input {
+  width: 100%;
+  background-color: #333333;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 8px;
+  outline: none;
+}
+
+.input-youtube input::placeholder {
+  color: lightgrey;
+}
+
+.input-youtube.invalid input::placeholder {
+  color: red;
+  animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  25%, 75% {
+    transform: translateX(-5px);
+  }
+  50% {
+    transform: translateX(5px);
+  }
+}

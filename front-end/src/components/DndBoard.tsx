@@ -3,11 +3,15 @@ import DndImage from './DndImage';
 import DndVideo from './DndVideo';
 import DndAudio from './DndAudio';
 import DndText from './DndText';
+import { isValidYoutubeLink, isValidImageUrl } from './urlValidator.tsx';
 import DrawingBoard from './DrawingBoard';
 import '../App.css';
+import InputYoutube from './InputYoutube.tsx';
+import DndYouTube from './DndYoutube.tsx';
+//How many imports? //Yes
 
 interface MediaItem {
-  type: 'image' | 'video' | 'audio' | 'text';
+  type: 'image' | 'video' | 'audio' | 'text' | 'youtube';
   src: string;
   name: string;
   text?: string;
@@ -27,23 +31,8 @@ const DndBoard: React.FC = () => {
   const [selected, setSelected] = useState<number | null>(null);
 
   const [drawingMode, setDrawingMode] = useState(false);
-  const [dimensions, setDimensions] = useState({ width: window.innerWidth, height: window.innerHeight });
 
   const [isInteractable, setIsInteractable] = useState(true);
-
-  const handleDelete = (event: KeyboardEvent) => {
-    if (event.key === 'Delete' && selected !== null) {
-      setMedia((prevMedia) => prevMedia.filter((_, index) => index !== selected));
-      setPositions((prevPositions) => prevPositions.filter((_, index) => index !== selected));
-      setInitialPositions((prevInitialPositions) => prevInitialPositions.filter((_, index) => index !== selected));
-      setSelected(null);
-    }
-  };
-
-  const handleDrawingToggle = () => {
-    setDrawingMode(!drawingMode);
-    setIsInteractable((prev) => !prev);
-  };
 
   useEffect(() => {
     document.addEventListener('keydown', handleDelete);
@@ -53,8 +42,9 @@ const DndBoard: React.FC = () => {
     };
   });
 
-  const handleMediaClick = (index: number) => {
-    setSelected(index);
+  const handleDrawingToggle = () => {
+    setDrawingMode(!drawingMode);
+    setIsInteractable((prev) => !prev);
   };
 
   const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>, index: number) => {
@@ -72,9 +62,13 @@ const DndBoard: React.FC = () => {
       },
     ]);
   };
-
+  
   const handleMouseUp = () => {
     setDragging(null);
+  };
+
+  const handleMediaClick = (index: number) => {
+    setSelected(index);
   };
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -86,18 +80,42 @@ const DndBoard: React.FC = () => {
       };
       setPositions(updatedPositions);
     }
-  };    
+  };
 
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
   };
 
+  const handleYoutubeLink = (link: string) => {
+    
+    const type: MediaItem['type'] = 'youtube';
+    const defaultPosition: MediaPosition = { x: 0, y: 0 };
+  
+    const newItem: MediaItem = {
+      type,
+      src: link,
+      name: 'YouTube Video',
+      text: link
+    };
+
+    if(isValidImageUrl(link)){
+      newItem.type='image';
+      newItem.name='imageURL';
+    }
+  
+    setMedia((prevMedia) => [...prevMedia, newItem]);
+    setPositions([...positions, defaultPosition]);
+    setInitialPositions([...initialPositions, defaultPosition]);
+  };
+
   const handleDrop = (eve: React.DragEvent<HTMLDivElement>) => {
+
     eve.preventDefault();
   
     const files = eve.dataTransfer.files;
   
     for (let i = 0; i < files.length; i++) {
+
       const file = files[i];
       const maxSize = 1024 * 1024 * 24; // 24MB
   
@@ -108,20 +126,20 @@ const DndBoard: React.FC = () => {
   
       let type: MediaItem['type'];
       const defaultPosition: MediaPosition = { x: 0, y: 0 };
-  
-      if (file.type.startsWith('image/')) {
-        type = 'image';
-      } else if (file.type.startsWith('audio/')) {
-        type = 'audio';
-        defaultPosition.x = 40;
-      } else if (file.type.startsWith('video/')) {
-        type = 'video';
-      } else if (file.type === 'text/plain') {
+      
+      if (file.type === 'text/plain') {
 
-        type = 'text';
         const reader = new FileReader();
+        type = 'text';
+
         reader.onload = (event) => {
+
           const textContent = event.target?.result as string;
+          
+          if(isValidYoutubeLink(textContent)) {
+            type='youtube';
+          }
+
           const newItem: MediaItem = {
             type,
             src: URL.createObjectURL(file),
@@ -133,24 +151,42 @@ const DndBoard: React.FC = () => {
           setPositions([...positions, defaultPosition]);
           setInitialPositions([...initialPositions, defaultPosition]);
         };
+
         reader.readAsText(file);
 
+        return;
+      }
+  
+      if (file.type.startsWith('image/')) {
+        type = 'image';
+      } else if (file.type.startsWith('audio/')) {
+        type = 'audio';
+        defaultPosition.x = 40;
+      } else if (file.type.startsWith('video/')) {
+        type = 'video';
       } else {
         console.warn('Unsupported file format:', file.name);
         continue;
       }
   
-      if (type !== 'text') {
-        const newItem: MediaItem = {
-          type,
-          src: URL.createObjectURL(file),
-          name: file.name,
-        };
-  
-        setMedia((prevMedia) => [...prevMedia, newItem]);
-        setPositions([...positions, defaultPosition]);
-        setInitialPositions([...initialPositions, defaultPosition]);
-      }
+      const newItem: MediaItem = {
+        type,
+        src: URL.createObjectURL(file),
+        name: file.name,
+      };
+
+      setMedia((prevMedia) => [...prevMedia, newItem]);
+      setPositions([...positions, defaultPosition]);
+      setInitialPositions([...initialPositions, defaultPosition]);
+    }
+  };
+
+  const handleDelete = (event: KeyboardEvent) => {
+    if (event.key === 'Delete' && selected !== null) {
+      setMedia((prevMedia) => prevMedia.filter((_, index) => index !== selected));
+      setPositions((prevPositions) => prevPositions.filter((_, index) => index !== selected));
+      setInitialPositions((prevInitialPositions) => prevInitialPositions.filter((_, index) => index !== selected));
+      setSelected(null);
     }
   };
 
@@ -168,6 +204,7 @@ const DndBoard: React.FC = () => {
       onMouseUp={handleMouseUp}
       onMouseMove={handleMouseMove}
     >
+
       {media.map((item, index) => {
         const isSelected = selected === index;
 
@@ -210,7 +247,7 @@ const DndBoard: React.FC = () => {
             onMouseDown={(e) => handleMouseDown(e, index)}
             onClick={() => handleMediaClick(index)}
           />
-        ) : (
+        ) : item.type === 'text' ? (
           <DndText
             key={index}
             text={item.text || ''}
@@ -219,15 +256,20 @@ const DndBoard: React.FC = () => {
             onMouseDown={(e) => handleMouseDown(e, index)}
             onTextChange={(newText) => handleTextChange(index, newText)}
           />
-        );
+          ) : (
+            <DndYouTube
+              key={index}
+              videoUrl={item.text || ''}
+              style={style}
+              isSelected={isSelected}
+              onMouseDown={(e) => handleMouseDown(e, index)}
+              onClick={() => handleMediaClick(index)}
+            />
+          );
       })}
 
-      <DrawingBoard
-        dimensions={{ width: window.innerWidth, height: window.innerHeight }}
-        style={{ position: 'absolute', top: 0, left: 0, zIndex: 2 }}
-        drawingMode={drawingMode}
-      />
-      
+      <InputYoutube onLinkSubmit={handleYoutubeLink} />
+
       <button
         onClick={handleDrawingToggle}
         style={{
@@ -244,6 +286,12 @@ const DndBoard: React.FC = () => {
       >
         {drawingMode ? 'Draw ON' : 'Draw OFF'}
       </button>
+
+      <DrawingBoard
+        dimensions={{ width: window.innerWidth, height: window.innerHeight }}
+        style={{ position: 'absolute', top: 0, left: 0, zIndex: 2 }}
+        drawingMode={drawingMode}
+      />
 
     </div>
   );
