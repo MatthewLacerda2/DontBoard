@@ -16,21 +16,19 @@ interface ScalerProps {
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
-        if (resizing && containerRef.current && e.shiftKey ) {
-          const deltaX = e.clientX - startX;
-          const deltaY = e.clientY - startY;
-      
-          // Calculate the scaling factor based on the initial width and height
-          const scalingFactor = Math.max(1 + deltaX / initialWidth, 1 + deltaY / initialHeight);
-      
-          const newWidth = initialWidth * scalingFactor;
-          const newHeight = initialHeight * scalingFactor;
-      
-          onResize(newWidth, newHeight);
-        }
-      };
-      
-            
+      if (resizing && containerRef.current && e.shiftKey ) {
+        const deltaX = e.clientX - startX;
+        const deltaY = e.clientY - startY;
+    
+        // Calculate the scaling factor based on the initial width and height
+        const scalingFactor = Math.max(1 + deltaX / initialWidth, 1 + deltaY / initialHeight);
+    
+        const newWidth = initialWidth * scalingFactor;
+        const newHeight = initialHeight * scalingFactor;
+    
+        onResize(newWidth, newHeight);
+      }
+    };      
   
     const handleMouseUp = () => {
       setResizing(false);

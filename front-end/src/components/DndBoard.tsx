@@ -95,6 +95,7 @@ const DndBoard: React.FC = () => {
         x: e.clientX - initialPositions[dragging].x,
         y: e.clientY - initialPositions[dragging].y,
       };
+      
       setPositions(updatedPositions);
     }
   };    
@@ -139,7 +140,7 @@ const DndBoard: React.FC = () => {
         type = 'video';
       } else if (file.type === 'text/plain') {
         type = 'text';
-        // Read the text content of the text file
+        
         const reader = new FileReader();
         reader.onload = (event) => {
           const textContent = event.target?.result as string;
@@ -175,6 +176,7 @@ const DndBoard: React.FC = () => {
   };
 
   return (
+    
     <div
       className="drop-area"
       onDrop={handleDrop}
@@ -183,14 +185,15 @@ const DndBoard: React.FC = () => {
       onMouseMove={handleMouseMove}
     >
 
-    {media.length === 0 && (
-      <p className='fluctuating-text'>Drag and drop your images here</p>
-    )}
+      {media.length === 0 && (
+        <p className='fluctuating-text'>Drag and drop your images here</p>
+      )}
 
       {media.map((item, index) => {
+
         const isSelected = selected === index;
 
-        const style: CSSProperties = {
+        const TextStyle: CSSProperties = {
           position: 'absolute',
           left: positions[index]?.x || 0,
           top: positions[index]?.y || 0,
@@ -202,7 +205,7 @@ const DndBoard: React.FC = () => {
         const dndMedia: DndMediaProps = {
             name:item.name,
             src:item.src,
-            style:style,
+            style:TextStyle,
             isSelected:isSelected,
             onMouseDown:(e) => handleMouseDown(e, index),
             onClick:() => handleMediaClick(index)
@@ -227,7 +230,7 @@ const DndBoard: React.FC = () => {
           <DndText
             key={index}
             text={item.text || ''}
-            style={style}
+            style={TextStyle}
             isSelected={isSelected}
             onMouseDown={(e) => handleMouseDown(e, index)}
             onTextChange={(newText) => handleTextChange(index, newText)}
