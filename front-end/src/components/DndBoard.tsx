@@ -3,7 +3,7 @@ import DndImage from './DndImage';
 import DndVideo from './DndVideo';
 import DndAudio from './DndAudio';
 import DndText from './DndText';
-import { isValidYoutubeLink } from './youtubeUtils.tsx';
+import { isValidYoutubeLink, isValidImageUrl } from './urlValidator.tsx';
 import DrawingBoard from './DrawingBoard';
 import '../App.css';
 import InputYoutube from './InputYoutube.tsx';
@@ -94,15 +94,19 @@ const DndBoard: React.FC = () => {
     const newItem: MediaItem = {
       type,
       src: link,
-      name: 'YouTube Video', // You can customize the name as needed
+      name: 'YouTube Video',
       text: link
     };
+
+    if(isValidImageUrl(link)){
+      newItem.type='image';
+      newItem.name='imageURL';
+    }
   
     setMedia((prevMedia) => [...prevMedia, newItem]);
     setPositions([...positions, defaultPosition]);
     setInitialPositions([...initialPositions, defaultPosition]);
   };
-  
 
   const handleDrop = (eve: React.DragEvent<HTMLDivElement>) => {
 
@@ -135,7 +139,7 @@ const DndBoard: React.FC = () => {
           if(isValidYoutubeLink(textContent)) {
             type='youtube';
           }
-          
+
           const newItem: MediaItem = {
             type,
             src: URL.createObjectURL(file),

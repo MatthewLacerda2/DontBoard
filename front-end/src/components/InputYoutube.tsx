@@ -1,10 +1,16 @@
 import React, { useState, useRef, ChangeEvent, KeyboardEvent } from 'react';
-import { isValidYoutubeLink } from './youtubeUtils.tsx';
+import { isValidYoutubeLink } from './urlValidator.tsx';
 import './InputYoutube.css'
 
 interface InputYoutubeProps {
   onLinkSubmit: (link: string) => void;
 }
+
+const isValidImageUrl = (url: string): boolean => {
+  const supportedExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp'];
+  const lowerCaseUrl = url.toLowerCase();
+  return supportedExtensions.some(ext => lowerCaseUrl.endsWith(ext));
+};
 
 const InputYoutube: React.FC<InputYoutubeProps> = ({ onLinkSubmit }) => {
 
@@ -22,6 +28,9 @@ const InputYoutube: React.FC<InputYoutubeProps> = ({ onLinkSubmit }) => {
       if (isValidYoutubeLink(inputValue)) {
         onLinkSubmit(inputValue);
         setInputValue('');
+      }else if(isValidImageUrl(inputValue)){
+        onLinkSubmit(inputValue);
+        setInputValue('');
       } else {
         setIsValidLink(false);
         setTimeout(() => {
@@ -32,8 +41,7 @@ const InputYoutube: React.FC<InputYoutubeProps> = ({ onLinkSubmit }) => {
         }, 5000);
       }
     }
-  };
-  
+  };  
 
   return (
     <div className={`input-youtube ${isValidLink ? '' : 'invalid'}`}>
