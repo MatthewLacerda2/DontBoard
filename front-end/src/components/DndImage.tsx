@@ -3,6 +3,7 @@ import Scaler from './Scaler';
 import { DndMediaProps } from './DndBoard';
 
 const DndImage: React.FC<DndMediaProps> = ({ src, name, style, isSelected, onMouseDown, onClick }) => {
+  
   const [width, setWidth] = useState<number>(style.width as number);
   const [height, setHeight] = useState<number>(style.height as number);
   const [scale, setScale] = useState<number>(1);

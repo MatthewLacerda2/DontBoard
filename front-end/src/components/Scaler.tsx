@@ -5,7 +5,7 @@ interface ScalerProps {
     children?: React.ReactNode;
 }
 
-  const Scaler: React.FC<ScalerProps> = ({ onResize, children }) => {
+const Scaler: React.FC<ScalerProps> = ({ onResize, children }) => {
   const [resizing, setResizing] = useState<boolean>(false);
   const [startX, setStartX] = useState<number>(0);
   const [startY, setStartY] = useState<number>(0);
@@ -28,8 +28,8 @@ interface ScalerProps {
     
         onResize(newWidth, newHeight);
       }
-    };      
-  
+    };
+      
     const handleMouseUp = () => {
       setResizing(false);
     };
@@ -46,7 +46,7 @@ interface ScalerProps {
   }, [resizing, startX, startY, initialWidth, initialHeight, onResize]);
   
   const handleMouseDown = (e: React.MouseEvent) => {
-    if (containerRef.current) {
+    if (containerRef.current && e.shiftKey) {
       setResizing(true);
       setStartX(e.clientX);
       setStartY(e.clientY);
