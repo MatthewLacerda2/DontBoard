@@ -115,17 +115,18 @@ const DndBoard: React.FC = () => {
   
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
-      const maxSize = 1024 * 1024 * 24; // 24MB
-  
+      const maxMB = 24;
+      const maxSize = 1024 * 1024 * maxMB; // 24MB
+
       if (file.size > maxSize) {
-        console.warn('File size exceeds 24MB:', file.name);
+        console.warn(`File size exceeds ${maxMB}MB:`, file.name);
+        alert(`File size exceeds ${maxMB}MB: ${file.name}`);
         continue;
       }
-  
+      
       let type: MediaItem['type'];
       const defaultPosition: MediaPosition = { x: 0, y: 0 };
   
-      // Check file type based on extension
       const extension = file.name.split('.').pop()?.toLowerCase();
   
       if (file.type === 'text/plain') {
@@ -163,11 +164,10 @@ const DndBoard: React.FC = () => {
       } else if (file.type.startsWith('video/')) {
         type = 'video';
       } else {
-        console.warn('Unsupported file format:', file.name);
+        alert("Unsupported file format");
         continue;
       }
   
-      // Check image file with allowed extensions
       if (type === 'image' && ['jpg', 'jpeg', 'png', 'gif'].includes(extension as string)) {
         type = 'image';
       } else if (type === 'video' && extension === 'mp4') {
@@ -177,7 +177,7 @@ const DndBoard: React.FC = () => {
         defaultPosition.x = 40;
       } else {
         alert(`Only ${getAllowedExtensions(type)} are allowed for ${type}`);
-        continue; // Skip unsupported file types
+        continue;
       }
   
       const newItem: MediaItem = {
@@ -192,7 +192,6 @@ const DndBoard: React.FC = () => {
     }
   };
   
-  // Helper function to get allowed extensions for a media type
   const getAllowedExtensions = (type: string): string => {
     switch (type) {
       case 'image':
