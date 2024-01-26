@@ -6,7 +6,7 @@ import DndText from './DndText';
 import { isValidYoutubeLink, isValidImageUrl } from './urlValidator.tsx';
 import DrawingBoard from './DrawingBoard';
 import '../App.css';
-import InputYoutube from './InputYoutube.tsx';
+import InputYoutube from './InputLink.tsx';
 import DndYouTube from './DndYoutube.tsx';
 //How many imports? //Yes
 
@@ -102,20 +102,18 @@ const DndBoard: React.FC = () => {
       newItem.type='image';
       newItem.name='imageURL';
     }
-  
+
     setMedia((prevMedia) => [...prevMedia, newItem]);
     setPositions([...positions, defaultPosition]);
     setInitialPositions([...initialPositions, defaultPosition]);
   };
 
   const handleDrop = (eve: React.DragEvent<HTMLDivElement>) => {
-
     eve.preventDefault();
   
     const files = eve.dataTransfer.files;
   
     for (let i = 0; i < files.length; i++) {
-
       const file = files[i];
       const maxSize = 1024 * 1024 * 24; // 24MB
   
@@ -126,20 +124,21 @@ const DndBoard: React.FC = () => {
   
       let type: MediaItem['type'];
       const defaultPosition: MediaPosition = { x: 0, y: 0 };
-      
+  
+      // Check file type based on extension
+      const extension = file.name.split('.').pop()?.toLowerCase();
+  
       if (file.type === 'text/plain') {
-
         const reader = new FileReader();
         type = 'text';
-
+  
         reader.onload = (event) => {
-
           const textContent = event.target?.result as string;
-          
-          if(isValidYoutubeLink(textContent)) {
-            type='youtube';
+  
+          if (isValidYoutubeLink(textContent)) {
+            type = 'youtube';
           }
-
+  
           const newItem: MediaItem = {
             type,
             src: URL.createObjectURL(file),
@@ -151,12 +150,11 @@ const DndBoard: React.FC = () => {
           setPositions([...positions, defaultPosition]);
           setInitialPositions([...initialPositions, defaultPosition]);
         };
-
+  
         reader.readAsText(file);
-
         return;
       }
-  
+
       if (file.type.startsWith('image/')) {
         type = 'image';
       } else if (file.type.startsWith('audio/')) {
@@ -169,17 +167,44 @@ const DndBoard: React.FC = () => {
         continue;
       }
   
+      // Check image file with allowed extensions
+      if (type === 'image' && ['jpg', 'jpeg', 'png', 'gif'].includes(extension as string)) {
+        type = 'image';
+      } else if (type === 'video' && extension === 'mp4') {
+        type = 'video';
+      } else if (type === 'audio' && extension === 'mp3') {
+        type = 'audio';
+        defaultPosition.x = 40;
+      } else {
+        alert(`Only ${getAllowedExtensions(type)} are allowed for ${type}`);
+        continue; // Skip unsupported file types
+      }
+  
       const newItem: MediaItem = {
         type,
         src: URL.createObjectURL(file),
         name: file.name,
       };
-
+  
       setMedia((prevMedia) => [...prevMedia, newItem]);
       setPositions([...positions, defaultPosition]);
       setInitialPositions([...initialPositions, defaultPosition]);
     }
   };
+  
+  // Helper function to get allowed extensions for a media type
+  const getAllowedExtensions = (type: string): string => {
+    switch (type) {
+      case 'image':
+        return '.jpg, .jpeg, .png, .gif';
+      case 'video':
+        return '.mp4';
+      case 'audio':
+        return '.mp3';
+      default:
+        return '';
+    }
+  };  
 
   const handleDelete = (event: KeyboardEvent) => {
     if (event.key === 'Delete' && selected !== null) {
