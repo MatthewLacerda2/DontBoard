@@ -123,7 +123,7 @@ const DndBoard: React.FC = () => {
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
       const maxMB = 24;
-      const maxSize = 1024 * 1024 * maxMB; // 24MB
+      const maxSize = 1024 * 1024 * maxMB;
 
       if (file.size > maxSize) {
         console.warn(`File size exceeds ${maxMB}MB:`, file.name);
@@ -247,7 +247,7 @@ const DndBoard: React.FC = () => {
           border: isSelected ? '1px solid purple' : 'none',
           padding: '12px',
           pointerEvents: isInteractable ? 'auto' : 'none', // Use pointer-events property
-          zIndex: 1,
+          zIndex: isSelected ? 2 : 1
         };
 
         return item.type === 'image' ? (
@@ -305,7 +305,7 @@ const DndBoard: React.FC = () => {
         onClick={handleDrawingToggle}
         style={{
           position: 'absolute', top: 8, right: 80,
-          zIndex: 3,
+          zIndex: 9,
           padding: '8px 14px',
           backgroundColor: drawingMode ? '#ff5b5b' : '#444444',
           color: '#ffffff',
@@ -320,7 +320,7 @@ const DndBoard: React.FC = () => {
 
       <DrawingBoard
         dimensions={{ width: window.innerWidth, height: window.innerHeight }}
-        style={{ position: 'absolute', top: 0, left: 0, zIndex: 2 }}
+        style={{ position: 'absolute', top: 0, left: 0, zIndex: 999 }}
         drawingMode={drawingMode}
       />
 
