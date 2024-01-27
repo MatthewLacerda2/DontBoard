@@ -48,12 +48,7 @@ const ButtonUpload: React.FC = () => {
         src: URL.createObjectURL(file),
         name: file.name
     };
-    /*
-    setMedia((prevMedia) => [...prevMedia, newItem]);
-    setPositions([...positions, defaultPosition]);
-    setInitialPositions([...initialPositions, defaultPosition]);
-    */
-    // Reset the file input to allow selecting the same file again
+    
     event.target.value = '';
   };
 
