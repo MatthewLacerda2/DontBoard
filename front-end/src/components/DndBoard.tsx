@@ -6,7 +6,7 @@ import DndText from './DndText';
 import { isValidYoutubeLink, isValidImageUrl } from './urlValidator.tsx';
 import DrawingBoard from './DrawingBoard';
 import '../App.css';
-import InputYoutube from './InputLink.tsx';
+import InputLink from './InputLink.tsx';
 import DndYouTube from './DndYoutube.tsx';
 //How many imports? //Yes
 
@@ -299,13 +299,13 @@ const DndBoard: React.FC = () => {
           );
       })}
 
-      <InputYoutube onLinkSubmit={handleYoutubeLink} />
+      <InputLink onLinkSubmit={handleYoutubeLink} />
 
       <button
         onClick={handleDrawingToggle}
         style={{
           position: 'absolute', top: 8, right: 80,
-          zIndex: 9,
+          zIndex: 999,
           padding: '8px 14px',
           backgroundColor: drawingMode ? '#ff5b5b' : '#444444',
           color: '#ffffff',
@@ -320,7 +320,7 @@ const DndBoard: React.FC = () => {
 
       <DrawingBoard
         dimensions={{ width: window.innerWidth, height: window.innerHeight }}
-        style={{ position: 'absolute', top: 0, left: 0, zIndex: 999 }}
+        style={{ position: 'absolute', top: 0, left: 0, zIndex: 99 }}
         drawingMode={drawingMode}
       />
 
