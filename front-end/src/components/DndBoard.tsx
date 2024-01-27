@@ -6,7 +6,7 @@ import DndText from './DndText';
 import { isValidYoutubeLink, isValidImageUrl } from './urlValidator.tsx';
 import DrawingBoard from './DrawingBoard';
 import '../App.css';
-import InputYoutube from './InputYoutube.tsx';
+import InputYoutube from './InputLink.tsx';
 import DndYouTube from './DndYoutube.tsx';
 //How many imports? //Yes
 
@@ -102,44 +102,51 @@ const DndBoard: React.FC = () => {
       newItem.type='image';
       newItem.name='imageURL';
     }
-  
+
     setMedia((prevMedia) => [...prevMedia, newItem]);
     setPositions([...positions, defaultPosition]);
     setInitialPositions([...initialPositions, defaultPosition]);
   };
 
   const handleDrop = (eve: React.DragEvent<HTMLDivElement>) => {
-
     eve.preventDefault();
   
     const files = eve.dataTransfer.files;
+
+    const maxMediasNumber = 64;
+
+    if(media.length + files.length > maxMediasNumber){
+      alert("Maximum number of media files reached");
+      return;
+    }
   
     for (let i = 0; i < files.length; i++) {
-
       const file = files[i];
-      const maxSize = 1024 * 1024 * 24; // 24MB
-  
+      const maxMB = 24;
+      const maxSize = 1024 * 1024 * maxMB;
+
       if (file.size > maxSize) {
-        console.warn('File size exceeds 24MB:', file.name);
+        console.warn(`File size exceeds ${maxMB}MB:`, file.name);
+        alert(`File size exceeds ${maxMB}MB: ${file.name}`);
         continue;
       }
-  
+      
       let type: MediaItem['type'];
       const defaultPosition: MediaPosition = { x: 0, y: 0 };
-      
+  
+      const extension = file.name.split('.').pop()?.toLowerCase();
+  
       if (file.type === 'text/plain') {
-
         const reader = new FileReader();
         type = 'text';
-
+  
         reader.onload = (event) => {
-
           const textContent = event.target?.result as string;
-          
-          if(isValidYoutubeLink(textContent)) {
-            type='youtube';
+  
+          if (isValidYoutubeLink(textContent)) {
+            type = 'youtube';
           }
-
+  
           const newItem: MediaItem = {
             type,
             src: URL.createObjectURL(file),
@@ -151,12 +158,11 @@ const DndBoard: React.FC = () => {
           setPositions([...positions, defaultPosition]);
           setInitialPositions([...initialPositions, defaultPosition]);
         };
-
+  
         reader.readAsText(file);
-
         return;
       }
-  
+
       if (file.type.startsWith('image/')) {
         type = 'image';
       } else if (file.type.startsWith('audio/')) {
@@ -165,7 +171,19 @@ const DndBoard: React.FC = () => {
       } else if (file.type.startsWith('video/')) {
         type = 'video';
       } else {
-        console.warn('Unsupported file format:', file.name);
+        alert("Unsupported file format");
+        continue;
+      }
+  
+      if (type === 'image' && ['jpg', 'jpeg', 'png', 'gif'].includes(extension as string)) {
+        type = 'image';
+      } else if (type === 'video' && extension === 'mp4') {
+        type = 'video';
+      } else if (type === 'audio' && extension === 'mp3') {
+        type = 'audio';
+        defaultPosition.x = 40;
+      } else {
+        alert(`Only ${getAllowedExtensions(type)} are allowed for ${type}`);
         continue;
       }
   
@@ -174,12 +192,25 @@ const DndBoard: React.FC = () => {
         src: URL.createObjectURL(file),
         name: file.name,
       };
-
+  
       setMedia((prevMedia) => [...prevMedia, newItem]);
       setPositions([...positions, defaultPosition]);
       setInitialPositions([...initialPositions, defaultPosition]);
     }
   };
+  
+  const getAllowedExtensions = (type: string): string => {
+    switch (type) {
+      case 'image':
+        return '.jpg, .jpeg, .png, .gif';
+      case 'video':
+        return '.mp4';
+      case 'audio':
+        return '.mp3';
+      default:
+        return '';
+    }
+  };  
 
   const handleDelete = (event: KeyboardEvent) => {
     if (event.key === 'Delete' && selected !== null) {
@@ -216,7 +247,7 @@ const DndBoard: React.FC = () => {
           border: isSelected ? '1px solid purple' : 'none',
           padding: '12px',
           pointerEvents: isInteractable ? 'auto' : 'none', // Use pointer-events property
-          zIndex: 1,
+          zIndex: isSelected ? 2 : 1
         };
 
         return item.type === 'image' ? (
@@ -274,7 +305,7 @@ const DndBoard: React.FC = () => {
         onClick={handleDrawingToggle}
         style={{
           position: 'absolute', top: 8, right: 80,
-          zIndex: 3,
+          zIndex: 9,
           padding: '8px 14px',
           backgroundColor: drawingMode ? '#ff5b5b' : '#444444',
           color: '#ffffff',
@@ -289,7 +320,7 @@ const DndBoard: React.FC = () => {
 
       <DrawingBoard
         dimensions={{ width: window.innerWidth, height: window.innerHeight }}
-        style={{ position: 'absolute', top: 0, left: 0, zIndex: 2 }}
+        style={{ position: 'absolute', top: 0, left: 0, zIndex: 999 }}
         drawingMode={drawingMode}
       />
 
