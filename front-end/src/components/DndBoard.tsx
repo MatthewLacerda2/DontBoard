@@ -112,6 +112,13 @@ const DndBoard: React.FC = () => {
     eve.preventDefault();
   
     const files = eve.dataTransfer.files;
+
+    const maxMediasNumber = 64;
+
+    if(media.length + files.length > maxMediasNumber){
+      alert("Maximum number of media files reached");
+      return;
+    }
   
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
