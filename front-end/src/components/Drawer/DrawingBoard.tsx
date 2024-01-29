@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import DrawEraser from './DrawEraser';
+import DrawTools from './DrawTools';
 
 interface DrawingBoardProps {
   dimensions: { width: number; height: number };
@@ -11,6 +11,7 @@ const DrawingBoard: React.FC<DrawingBoardProps> = ({ dimensions, style, drawingM
   const [drawing, setDrawing] = useState(false);
   const [eraserMode, setEraserMode] = useState(false);
   const [thickness, setThickness] = useState(5);
+  const [currentColor, setCurrentColor] = useState('#000000'); // Added state for current color
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const contextRef = useRef<CanvasRenderingContext2D | null>(null);
 
@@ -22,10 +23,10 @@ const DrawingBoard: React.FC<DrawingBoardProps> = ({ dimensions, style, drawingM
         contextRef.current = context;
         context.lineCap = 'round';
         context.lineWidth = thickness;
-        context.strokeStyle = eraserMode ? '#ffffff' : '#000000';
+        context.strokeStyle = eraserMode ? '#000000' : currentColor; // Updated to use currentColor
       }
     }
-  }, [thickness, eraserMode]);
+  }, [thickness, eraserMode, currentColor]);
 
   const startDrawing = (event: React.MouseEvent<HTMLCanvasElement>) => {
     const context = contextRef.current;
@@ -58,6 +59,10 @@ const DrawingBoard: React.FC<DrawingBoardProps> = ({ dimensions, style, drawingM
     setEraserMode(!eraserMode);
   };
 
+  const handleColorChange = (color: string) => {
+    setCurrentColor(color);
+  };
+
   return (
     <div>
       <canvas
@@ -71,12 +76,11 @@ const DrawingBoard: React.FC<DrawingBoardProps> = ({ dimensions, style, drawingM
         height={dimensions.height}
         style={{
           ...style,
-          pointerEvents: drawingMode ? 'auto' : 'none'
+          pointerEvents: drawingMode ? 'auto' : 'none',
         }}
       />
 
-      {drawingMode && <DrawEraser onThicknessChange={handleThicknessChange} onToggleEraser={handleToggleEraser} />}
-      
+      {drawingMode && <DrawTools onThicknessChange={handleThicknessChange} onToggleEraser={handleToggleEraser} onColorChange={handleColorChange} />}
     </div>
   );
 };
