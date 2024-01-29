@@ -5,9 +5,10 @@ import DndAudio from './DndAudio';
 import DndText from './DndText';
 import { isValidYoutubeLink, isValidImageUrl } from './urlValidator.tsx';
 import DrawingBoard from './DrawingBoard';
-import '../App.css';
-import InputYoutube from './InputLink.tsx';
+import InputLink from './InputLink.tsx';
 import DndYouTube from './DndYoutube.tsx';
+import '../App.css';
+import ButtonUpload from './ButtonUpload.tsx';
 //How many imports? //Yes
 
 interface MediaItem {
@@ -48,6 +49,8 @@ const DndBoard: React.FC = () => {
   };
 
   const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>, index: number) => {
+    e.preventDefault();
+    
     setSelected(index);
     setDragging(index);
 
@@ -72,6 +75,8 @@ const DndBoard: React.FC = () => {
   };
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    
     if (dragging !== null) {
       const updatedPositions = [...positions];
       updatedPositions[dragging] = {
@@ -111,11 +116,30 @@ const DndBoard: React.FC = () => {
   const handleDrop = (eve: React.DragEvent<HTMLDivElement>) => {
     eve.preventDefault();
   
-    const files = eve.dataTransfer.files;
+    handleUpload(eve.dataTransfer.files);
+  };
+  
+  const getAllowedExtensions = (type: string): string => {
+    switch (type) {
+      case 'image':
+        return '.jpg, .jpeg, .png, .gif';
+      case 'video':
+        return '.mp4';
+      case 'audio':
+        return '.mp3';
+      default:
+        return '';
+    }
+  };
 
+  const handleUpload = (files: FileList | null) => {
+    if (!files) {
+      return;
+    }
+  
     const maxMediasNumber = 64;
-
-    if(media.length + files.length > maxMediasNumber){
+  
+    if (media.length + files.length > maxMediasNumber) {
       alert("Maximum number of media files reached");
       return;
     }
@@ -124,13 +148,13 @@ const DndBoard: React.FC = () => {
       const file = files[i];
       const maxMB = 24;
       const maxSize = 1024 * 1024 * maxMB;
-
+  
       if (file.size > maxSize) {
         console.warn(`File size exceeds ${maxMB}MB:`, file.name);
         alert(`File size exceeds ${maxMB}MB: ${file.name}`);
         continue;
       }
-      
+  
       let type: MediaItem['type'];
       const defaultPosition: MediaPosition = { x: 0, y: 0 };
   
@@ -153,16 +177,16 @@ const DndBoard: React.FC = () => {
             name: file.name,
             text: textContent,
           };
-  
+          
           setMedia((prevMedia) => [...prevMedia, newItem]);
           setPositions([...positions, defaultPosition]);
           setInitialPositions([...initialPositions, defaultPosition]);
         };
   
         reader.readAsText(file);
-        return;
+        continue;
       }
-
+  
       if (file.type.startsWith('image/')) {
         type = 'image';
       } else if (file.type.startsWith('audio/')) {
@@ -199,19 +223,6 @@ const DndBoard: React.FC = () => {
     }
   };
   
-  const getAllowedExtensions = (type: string): string => {
-    switch (type) {
-      case 'image':
-        return '.jpg, .jpeg, .png, .gif';
-      case 'video':
-        return '.mp4';
-      case 'audio':
-        return '.mp3';
-      default:
-        return '';
-    }
-  };  
-
   const handleDelete = (event: KeyboardEvent) => {
     if (event.key === 'Delete' && selected !== null) {
       setMedia((prevMedia) => prevMedia.filter((_, index) => index !== selected));
@@ -299,15 +310,17 @@ const DndBoard: React.FC = () => {
           );
       })}
 
-      <InputYoutube onLinkSubmit={handleYoutubeLink} />
+      <InputLink onLinkSubmit={handleYoutubeLink} />
+
+      <ButtonUpload onUpload={handleUpload} />
 
       <button
         onClick={handleDrawingToggle}
         style={{
-          position: 'absolute', top: 8, right: 80,
-          zIndex: 9,
+          position: 'absolute', top: 11, right: 80,
+          zIndex: 999,
           padding: '8px 14px',
-          backgroundColor: drawingMode ? '#ff5b5b' : '#444444',
+          backgroundColor: drawingMode ? '#ff5b5b' : '#555555',
           color: '#ffffff',
           border: 'none',
           borderRadius: '5px',
@@ -320,7 +333,7 @@ const DndBoard: React.FC = () => {
 
       <DrawingBoard
         dimensions={{ width: window.innerWidth, height: window.innerHeight }}
-        style={{ position: 'absolute', top: 0, left: 0, zIndex: 999 }}
+        style={{ position: 'absolute', top: 0, left: 0, zIndex: 99 }}
         drawingMode={drawingMode}
       />
 

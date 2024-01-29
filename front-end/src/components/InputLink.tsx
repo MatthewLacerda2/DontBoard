@@ -6,7 +6,7 @@ interface InputYoutubeProps {
   onLinkSubmit: (link: string) => void;
 }
 
-const InputYoutube: React.FC<InputYoutubeProps> = ({ onLinkSubmit }) => {
+const InputLink: React.FC<InputYoutubeProps> = ({ onLinkSubmit }) => {
 
   const [inputValue, setInputValue] = useState<string>('');
   const [isValidLink, setIsValidLink] = useState<boolean>(true);
@@ -53,4 +53,4 @@ const InputYoutube: React.FC<InputYoutubeProps> = ({ onLinkSubmit }) => {
   );
 };
 
-export default InputYoutube;
+export default InputLink;
