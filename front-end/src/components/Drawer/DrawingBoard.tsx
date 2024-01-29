@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import DrawEraser from './DrawEraser';
 
 interface DrawingBoardProps {
   dimensions: { width: number; height: number };
@@ -8,6 +9,8 @@ interface DrawingBoardProps {
 
 const DrawingBoard: React.FC<DrawingBoardProps> = ({ dimensions, style, drawingMode }) => {
   const [drawing, setDrawing] = useState(false);
+  const [eraserMode, setEraserMode] = useState(false);
+  const [thickness, setThickness] = useState(5);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const contextRef = useRef<CanvasRenderingContext2D | null>(null);
 
@@ -18,11 +21,11 @@ const DrawingBoard: React.FC<DrawingBoardProps> = ({ dimensions, style, drawingM
       if (context) {
         contextRef.current = context;
         context.lineCap = 'round';
-        context.lineWidth = 5;
-        context.strokeStyle = 'white';
+        context.lineWidth = thickness;
+        context.strokeStyle = eraserMode ? '#ffffff' : '#000000';
       }
     }
-  }, []);
+  }, [thickness, eraserMode]);
 
   const startDrawing = (event: React.MouseEvent<HTMLCanvasElement>) => {
     const context = contextRef.current;
@@ -47,21 +50,34 @@ const DrawingBoard: React.FC<DrawingBoardProps> = ({ dimensions, style, drawingM
     setDrawing(false);
   };
 
+  const handleThicknessChange = (newThickness: number) => {
+    setThickness(newThickness);
+  };
+
+  const handleToggleEraser = () => {
+    setEraserMode(!eraserMode);
+  };
+
   return (
-    <canvas
-      ref={canvasRef}
-      className="drawing-board"
-      onMouseDown={startDrawing}
-      onMouseMove={draw}
-      onMouseUp={stopDrawing}
-      onMouseOut={stopDrawing}
-      width={dimensions.width}
-      height={dimensions.height}
-      style={{
-        ...style,
-        pointerEvents: drawingMode ? 'auto' : 'none',
-      }}
-    />
+    <div>
+      <canvas
+        ref={canvasRef}
+        className="drawing-board"
+        onMouseDown={startDrawing}
+        onMouseMove={draw}
+        onMouseUp={stopDrawing}
+        onMouseOut={stopDrawing}
+        width={dimensions.width}
+        height={dimensions.height}
+        style={{
+          ...style,
+          pointerEvents: drawingMode ? 'auto' : 'none'
+        }}
+      />
+
+      {drawingMode && <DrawEraser onThicknessChange={handleThicknessChange} onToggleEraser={handleToggleEraser} />}
+      
+    </div>
   );
 };
 
