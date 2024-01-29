@@ -31,25 +31,26 @@ const DrawTools: React.FC<DrawToolsProps> = ({ onThicknessChange, onToggleEraser
     <div
       style={{
         position: 'fixed',
-        top: '50px',
-        right: '10px',
+        top: '0px',
+        right: '185px',
         zIndex: 999,
         display: 'flex',
-        flexDirection: 'column',
+        flexDirection: 'row',
         alignItems: 'center',
       }}
     >
       <button
         onClick={handleToggleEraser}
         style={{
-          marginBottom: '5px',
+          margin:'7px',
+          marginBottom: '6px',
           backgroundColor: '#444444',
           color: '#ffffff',
           padding: '8px',
           cursor: 'pointer',
           borderRadius: '5px',
           border: '2px solid',
-          borderColor: eraserActive ? '#444444' : '#DDDDDD'
+          borderColor: eraserActive ? '#DDDDDD' : '#444444'
         }}
       >
         <FontAwesomeIcon icon={faEraser} style={{ width: '20px', height: 'auto', fontSize: '1.5em' }} />
@@ -62,10 +63,7 @@ const DrawTools: React.FC<DrawToolsProps> = ({ onThicknessChange, onToggleEraser
       <ColorButton color="#3333FF" onClick={() => handleColorChange('#3333FF')} />
       <ColorButton color="#009900" onClick={() => handleColorChange('#009900')} />
 
-      {/* Circular color buttons */}
-      {/* ... (unchanged) */}
-
-      <label htmlFor="thicknessSlider" style={{ marginRight: '15px', marginTop: '10px' }} />
+      <label htmlFor="thicknessSlider" style={{ width:'50%', margin:'-20px'}} />
       <input
         type="range"
         id="thicknessSlider"
@@ -76,7 +74,7 @@ const DrawTools: React.FC<DrawToolsProps> = ({ onThicknessChange, onToggleEraser
         style={{
           width: '100%',
           height: '6px',
-          marginTop: '-3px',
+          marginTop: '4px',
         }}
       />
     </div>
@@ -87,12 +85,12 @@ const ColorButton: React.FC<{ color: string; onClick: () => void }> = ({ color, 
   <button
     onClick={onClick}
     style={{
-      width: '25px',
-      height: '25px',
+      width: '37px',
+      height: '23px',
       borderRadius: '50%',
       backgroundColor: color,
       border: '2px solid white',
-      margin: '4px',
+      margin: '6px',
       cursor: 'pointer',
     }}
   />
