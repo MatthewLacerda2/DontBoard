@@ -8,6 +8,7 @@ import DrawingBoard from './DrawingBoard';
 import InputLink from './InputLink.tsx';
 import DndYouTube from './DndYoutube.tsx';
 import '../App.css';
+import ButtonUpload from './ButtonUpload.tsx';
 //How many imports? //Yes
 
 interface MediaItem {
@@ -210,7 +211,99 @@ const DndBoard: React.FC = () => {
       default:
         return '';
     }
-  };  
+  };
+
+  const handleUpload = (files: FileList | null) => {
+    if (!files) {
+      return;
+    }
+  
+    const maxMediasNumber = 64;
+  
+    if (media.length + files.length > maxMediasNumber) {
+      alert("Maximum number of media files reached");
+      return;
+    }
+  
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      const maxMB = 24;
+      const maxSize = 1024 * 1024 * maxMB;
+  
+      if (file.size > maxSize) {
+        console.warn(`File size exceeds ${maxMB}MB:`, file.name);
+        alert(`File size exceeds ${maxMB}MB: ${file.name}`);
+        continue;
+      }
+  
+      let type: MediaItem['type'];
+      const defaultPosition: MediaPosition = { x: 0, y: 0 };
+  
+      const extension = file.name.split('.').pop()?.toLowerCase();
+  
+      if (file.type === 'text/plain') {
+        const reader = new FileReader();
+        type = 'text';
+  
+        reader.onload = (event) => {
+          const textContent = event.target?.result as string;
+  
+          if (isValidYoutubeLink(textContent)) {
+            type = 'youtube';
+          }
+  
+          const newItem: MediaItem = {
+            type,
+            src: URL.createObjectURL(file),
+            name: file.name,
+            text: textContent,
+          };
+  
+          setMedia((prevMedia) => [...prevMedia, newItem]);
+          setPositions([...positions, defaultPosition]);
+          setInitialPositions([...initialPositions, defaultPosition]);
+        };
+  
+        reader.readAsText(file);
+        continue;
+      }
+  
+      if (file.type.startsWith('image/')) {
+        type = 'image';
+      } else if (file.type.startsWith('audio/')) {
+        type = 'audio';
+        defaultPosition.x = 40;
+      } else if (file.type.startsWith('video/')) {
+        type = 'video';
+      } else {
+        alert("Unsupported file format");
+        continue;
+      }
+  
+      if (type === 'image' && ['jpg', 'jpeg', 'png', 'gif'].includes(extension as string)) {
+        type = 'image';
+      } else if (type === 'video' && extension === 'mp4') {
+        type = 'video';
+      } else if (type === 'audio' && extension === 'mp3') {
+        type = 'audio';
+        defaultPosition.x = 40;
+      } else {
+        alert(`Only ${getAllowedExtensions(type)} are allowed for ${type}`);
+        continue;
+      }
+  
+      const newItem: MediaItem = {
+        type,
+        src: URL.createObjectURL(file),
+        name: file.name,
+      };
+  
+      setMedia((prevMedia) => [...prevMedia, newItem]);
+      setPositions([...positions, defaultPosition]);
+      setInitialPositions([...initialPositions, defaultPosition]);
+    }
+  };
+  
 
   const handleDelete = (event: KeyboardEvent) => {
     if (event.key === 'Delete' && selected !== null) {
@@ -300,6 +393,8 @@ const DndBoard: React.FC = () => {
       })}
 
       <InputLink onLinkSubmit={handleYoutubeLink} />
+
+      <ButtonUpload onUpload={handleUpload} />
 
       <button
         onClick={handleDrawingToggle}
