@@ -10,6 +10,7 @@ interface DrawToolsProps {
 
 const DrawTools: React.FC<DrawToolsProps> = ({ onThicknessChange, onToggleEraser, onColorChange }) => {
   const [thickness, setThickness] = useState(5);
+  const [eraserActive, setEraserActive] = useState(false);
 
   const handleThicknessChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newThickness = parseInt(event.target.value, 10);
@@ -19,6 +20,11 @@ const DrawTools: React.FC<DrawToolsProps> = ({ onThicknessChange, onToggleEraser
 
   const handleColorChange = (color: string) => {
     onColorChange(color);
+  };
+
+  const handleToggleEraser = () => {
+    onToggleEraser();
+    setEraserActive(!eraserActive);
   };
 
   return (
@@ -34,7 +40,7 @@ const DrawTools: React.FC<DrawToolsProps> = ({ onThicknessChange, onToggleEraser
       }}
     >
       <button
-        onClick={onToggleEraser}
+        onClick={handleToggleEraser}
         style={{
           marginBottom: '5px',
           backgroundColor: '#444444',
@@ -42,7 +48,8 @@ const DrawTools: React.FC<DrawToolsProps> = ({ onThicknessChange, onToggleEraser
           padding: '8px',
           cursor: 'pointer',
           borderRadius: '5px',
-          border: 'none',
+          border: '2px solid',
+          borderColor: eraserActive ? '#444444' : '#DDDDDD'
         }}
       >
         <FontAwesomeIcon icon={faEraser} style={{ width: '20px', height: 'auto', fontSize: '1.5em' }} />
@@ -54,6 +61,9 @@ const DrawTools: React.FC<DrawToolsProps> = ({ onThicknessChange, onToggleEraser
       <ColorButton color="#D000D0" onClick={() => handleColorChange('#D000D0')} />
       <ColorButton color="#3333FF" onClick={() => handleColorChange('#3333FF')} />
       <ColorButton color="#009900" onClick={() => handleColorChange('#009900')} />
+
+      {/* Circular color buttons */}
+      {/* ... (unchanged) */}
 
       <label htmlFor="thicknessSlider" style={{ marginRight: '15px', marginTop: '10px' }} />
       <input
