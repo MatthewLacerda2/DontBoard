@@ -18,8 +18,9 @@ const ButtonUpload: React.FC<ButtonUploadProps> = ({ onUpload }) => {
     <div
       style={{
         position: 'absolute',
+        zIndex: 999,
         top: '8px',
-        right: '18px',
+        right: '18px'
       }}
     >
       <label
