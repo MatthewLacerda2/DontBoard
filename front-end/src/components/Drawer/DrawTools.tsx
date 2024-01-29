@@ -62,6 +62,7 @@ const DrawTools: React.FC<DrawToolsProps> = ({ onThicknessChange, onToggleEraser
       <ColorButton color="#D000D0" onClick={() => handleColorChange('#D000D0')} />
       <ColorButton color="#3333FF" onClick={() => handleColorChange('#3333FF')} />
       <ColorButton color="#009900" onClick={() => handleColorChange('#009900')} />
+      <ColorButton color="#000000" onClick={() => handleColorChange('#000000')} />
 
       <label htmlFor="thicknessSlider" style={{ width:'50%', margin:'-20px'}} />
       <input

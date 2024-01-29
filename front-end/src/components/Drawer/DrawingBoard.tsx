@@ -57,9 +57,18 @@ const DrawingBoard: React.FC<DrawingBoardProps> = ({ dimensions, style, drawingM
 
   const handleToggleEraser = () => {
     setEraserMode(!eraserMode);
+
+    // Reset the canvas when the eraser is toggled
+    if (!eraserMode && canvasRef.current && contextRef.current) {
+      const context = contextRef.current;
+      context.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+    }
   };
 
   const handleColorChange = (color: string) => {
+    // Reset the eraser mode when changing colors
+    setEraserMode(false);
+
     setCurrentColor(color);
   };
 
