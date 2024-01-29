@@ -20,14 +20,14 @@ const ButtonUpload: React.FC<ButtonUploadProps> = ({ onUpload }) => {
         position: 'absolute',
         zIndex: 999,
         top: '8px',
-        right: '18px'
+        right: '17px'
       }}
     >
       <label
         style={{
           backgroundColor: '#555555',
           color: '#ffffff',
-          padding: '10px 15px',
+          padding: '10px 14px',
           cursor: 'pointer',
           borderRadius: '5px',
           display: 'inline-flex',
