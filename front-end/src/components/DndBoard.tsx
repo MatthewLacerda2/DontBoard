@@ -4,7 +4,7 @@ import DndVideo from './DndVideo';
 import DndAudio from './DndAudio';
 import DndText from './DndText';
 import { isValidYoutubeLink, isValidImageUrl } from './urlValidator.tsx';
-import DrawingBoard from './DrawingBoard';
+import DrawingBoard from './Drawer/DrawingBoard.tsx';
 import InputLink from './InputLink.tsx';
 import DndYouTube from './DndYoutube.tsx';
 import '../App.css';
