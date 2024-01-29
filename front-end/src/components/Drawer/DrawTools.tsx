@@ -10,7 +10,6 @@ interface DrawToolsProps {
 
 const DrawTools: React.FC<DrawToolsProps> = ({ onThicknessChange, onToggleEraser, onColorChange }) => {
   const [thickness, setThickness] = useState(5);
-  const [eraserActive, setEraserActive] = useState(false);
 
   const handleThicknessChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newThickness = parseInt(event.target.value, 10);
@@ -24,7 +23,6 @@ const DrawTools: React.FC<DrawToolsProps> = ({ onThicknessChange, onToggleEraser
 
   const handleToggleEraser = () => {
     onToggleEraser();
-    setEraserActive(!eraserActive);
   };
 
   return (
@@ -49,18 +47,16 @@ const DrawTools: React.FC<DrawToolsProps> = ({ onThicknessChange, onToggleEraser
           padding: '8px',
           cursor: 'pointer',
           borderRadius: '5px',
-          border: '2px solid',
-          borderColor: eraserActive ? '#DDDDDD' : '#444444'
+          border: '2px solid black',
         }}
       >
         <FontAwesomeIcon icon={faEraser} style={{ width: '20px', height: 'auto', fontSize: '1.5em' }} />
       </button>
 
       <ColorButton color="#FFFFFF" onClick={() => handleColorChange('#FFFFFF')} />
-      <ColorButton color="#2196F3" onClick={() => handleColorChange('#2196F3')} />
+      <ColorButton color="#3399F3" onClick={() => handleColorChange('#3399F3')} />
       <ColorButton color="#FF0000" onClick={() => handleColorChange('#FF0000')} />
       <ColorButton color="#D000D0" onClick={() => handleColorChange('#D000D0')} />
-      <ColorButton color="#3333FF" onClick={() => handleColorChange('#3333FF')} />
       <ColorButton color="#009900" onClick={() => handleColorChange('#009900')} />
       <ColorButton color="#000000" onClick={() => handleColorChange('#000000')} />
 

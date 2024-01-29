@@ -9,9 +9,8 @@ interface DrawingBoardProps {
 
 const DrawingBoard: React.FC<DrawingBoardProps> = ({ dimensions, style, drawingMode }) => {
   const [drawing, setDrawing] = useState(false);
-  const [eraserMode, setEraserMode] = useState(false);
   const [thickness, setThickness] = useState(5);
-  const [currentColor, setCurrentColor] = useState('#000000'); // Added state for current color
+  const [currentColor, setCurrentColor] = useState('#000000');
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const contextRef = useRef<CanvasRenderingContext2D | null>(null);
 
@@ -23,10 +22,10 @@ const DrawingBoard: React.FC<DrawingBoardProps> = ({ dimensions, style, drawingM
         contextRef.current = context;
         context.lineCap = 'round';
         context.lineWidth = thickness;
-        context.strokeStyle = eraserMode ? '#000000' : currentColor; // Updated to use currentColor
+        context.strokeStyle = currentColor;
       }
     }
-  }, [thickness, eraserMode, currentColor]);
+  }, [thickness, currentColor]);
 
   const startDrawing = (event: React.MouseEvent<HTMLCanvasElement>) => {
     const context = contextRef.current;
@@ -56,19 +55,13 @@ const DrawingBoard: React.FC<DrawingBoardProps> = ({ dimensions, style, drawingM
   };
 
   const handleToggleEraser = () => {
-    setEraserMode(!eraserMode);
-
-    // Reset the canvas when the eraser is toggled
-    if (!eraserMode && canvasRef.current && contextRef.current) {
+    if (canvasRef.current && contextRef.current) {
       const context = contextRef.current;
       context.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
     }
   };
 
   const handleColorChange = (color: string) => {
-    // Reset the eraser mode when changing colors
-    setEraserMode(false);
-
     setCurrentColor(color);
   };
 
