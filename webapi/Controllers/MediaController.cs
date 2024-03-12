@@ -50,22 +50,21 @@ public class MediaController : ControllerBase {
     }
 
     [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(PageMedia))]
-    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
     [HttpPost]
-    public async Task<IActionResult> CreateLog(Guid id, [FromBody] PageMedia newMedia) {
+    public async Task<IActionResult> CreateFile(Guid id, [FromBody] MediaFile newMedia) {
 
-        PageMedia page = new PageMedia();
         var _pagemedia = await _PageMediaCollection.FindAsync(s=>s.Id == id);        
 
         if(_pagemedia==null) {
-            _PageMediaCollection.InsertOne(page)
+            PageMedia page = new PageMedia();
+            page.files.Add(newMedia);
+            _PageMediaCollection.InsertOne(page);
         }else{
-            page = _pagemedia;
+            _pagemedia.files.Add(newMedia);
+            //salvar esse baguio no db
         }
 
-        page.files.Add(newMedia);
-
-        return CreatedAtAction(nameof(CreateLog), newMedia);
+        return CreatedAtAction(nameof(CreateFile), newMedia);
     }
     
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(MediaFile))]
