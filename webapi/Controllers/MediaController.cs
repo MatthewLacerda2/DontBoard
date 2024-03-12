@@ -8,26 +8,27 @@ using Newtonsoft.Json;
 namespace webserver.Controllers;
 
 /// <summary>
-/// Controller class for MediaFile CRUD requests
+/// Controller class handling PageMedia and MediaFiles
+/// 
+/// C.reate: post a media_file. If it's page doesnt exist, create it
+/// R.ead: read a page
+/// U.pdate: change a media_files's properties
+/// D.elete: delete a media_file. If it's page is now empty, delete the page
+/// 
 /// </summary>
 [ApiController]
-[Route("api/v1/logs")]
+[Route("api/v1/medias")]
 [Produces("application/json")]
 public class MediaController : ControllerBase {
 
     private readonly IMongoCollection<MediaFile> _PageMediaCollection;
 
     /// <summary>
-    /// Controller class for Appointment Log CRUD requests
+    /// Controller class for Appointment CRUD requests
     /// </summary>
     public MediaController(IMongoClient mongoClient) {
         _PageMediaCollection = mongoClient.GetDatabase("mongo_db").GetCollection<MediaFile>("PageMedia");
     }
-
-    //POST: post a media. if the page doesnt exist, create
-    //READ: read a page
-    //Update: change a files properties
-    //Delete: delete a file. if the page is now empty, delete the page
 
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(MediaFile))]
     [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(string))]
@@ -66,7 +67,7 @@ public class MediaController : ControllerBase {
 
         var logToDelete = await _appointmentsCollection.Find(s => s.Id == id).FirstOrDefaultAsync();
         if (logToDelete == null) {
-            return BadRequest("Log Appointment does not exist");
+            return BadRequest("Appointment does not exist");
         }
         
         await _appointmentsCollection.DeleteOneAsync(s => s.Id == id);
