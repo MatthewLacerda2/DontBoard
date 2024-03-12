@@ -5,6 +5,7 @@ using Server.Models;
 using MongoDB.Driver;
 using Newtonsoft.Json;
 using MongoDB.Bson;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace webserver.Controllers;
 
@@ -46,6 +47,25 @@ public class MediaController : ControllerBase {
 
         var response = JsonConvert.SerializeObject(_pagemedia.files);
         return Ok(response);
+    }
+
+    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(PageMedia))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
+    [HttpPost]
+    public async Task<IActionResult> CreateLog(Guid id, [FromBody] PageMedia newMedia) {
+
+        PageMedia page = new PageMedia();
+        var _pagemedia = await _PageMediaCollection.FindAsync(s=>s.Id == id);        
+
+        if(_pagemedia==null) {
+            _PageMediaCollection.InsertOne(page)
+        }else{
+            page = _pagemedia;
+        }
+
+        page.files.Add(newMedia);
+
+        return CreatedAtAction(nameof(CreateLog), newMedia);
     }
     
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(MediaFile))]

@@ -3,10 +3,10 @@ namespace Server.Models;
 public class PageMedia {
 
     public Guid Id;
-    public MediaFile[] files;
+    public List<MediaFile[]> files;
 
     public PageMedia(){
         Id = Guid.NewGuid();
-        files = new MediaFile[0];
+        files = new List<MediaFile[]>();
     }
 }
