@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Server.Models;
 using MongoDB.Driver;
 using Newtonsoft.Json;
+using MongoDB.Bson;
 
 namespace webserver.Controllers;
 
@@ -11,7 +12,7 @@ namespace webserver.Controllers;
 /// Controller class handling PageMedia and MediaFiles
 /// 
 /// C.reate: post a media_file. If it's page doesnt exist, create it
-/// R.ead: read a page
+/// R.ead: read a page's media files
 /// U.pdate: change a media_files's properties
 /// D.elete: delete a media_file. If it's page is now empty, delete the page
 /// 
@@ -21,57 +22,72 @@ namespace webserver.Controllers;
 [Produces("application/json")]
 public class MediaController : ControllerBase {
 
-    private readonly IMongoCollection<MediaFile> _PageMediaCollection;
+    private readonly IMongoCollection<PageMedia> _PageMediaCollection;
 
     /// <summary>
     /// Controller class for Appointment CRUD requests
     /// </summary>
     public MediaController(IMongoClient mongoClient) {
-        _PageMediaCollection = mongoClient.GetDatabase("mongo_db").GetCollection<MediaFile>("PageMedia");
+        _PageMediaCollection = mongoClient.GetDatabase("mongo_db").GetCollection<PageMedia>("PageMedia");
     }
 
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(MediaFile))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(MediaFile[]))]
     [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(string))]
     [HttpGet("{id}")]
     public async Task<IActionResult> ReadPage(Guid id) {
 
-        var log = await _PageMediaCollection.FindAsync(s => s.Id == id);
+        var _pagemedia = await _PageMediaCollection.FindAsync(s=>s.Id == id);
 
-        if(log==null) {
-            return NotFound();
+        if(_pagemedia==null) {
+            return NotFound("Page not found");
         }
 
-        var response = JsonConvert.SerializeObject(log);
+        //Retornar as mediafiles
+
+        var response = JsonConvert.SerializeObject(_pagemedia.files);
         return Ok(response);
     }
-
+    
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(MediaFile))]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
     [HttpPut]
-    public async Task<IActionResult> UpdateFile([FromBody] MediaFile upAppointment) {
-        
-        var existingLog = await _appointmentsCollection.Find(s => s.Id == upAppointment.Id).FirstOrDefaultAsync();
-        if (existingLog == null) {
-            return NotFound("Log not found");
-        }
-        
-        await _appointmentsCollection.ReplaceOneAsync(s => s.Id == upAppointment.Id, upAppointment);
+    public async Task<IActionResult> UpdateFile(Guid id, [FromBody] MediaFile updateMedia) {
 
-        return Ok(upAppointment);
+        var existingFile = await _PageMediaCollection.FindAsync(s=>s.Id == id);
+        if (existingFile == null) {
+            return BadRequest("Page not found");
+        }
+
+        //Dessa page, encontra o arquivo
+
+        //Se nao existir, notfound()
+
+        //We are updating the whole MediaFile here
+        //Would be interesting, if we are dealing with something other than text, to only update the positions and other variables
+        //to save on bandwidth.
+        //Se existir, atualiza
+
+        return Ok(updateMedia);
     }
     
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(BadRequestObjectResult))]
     [HttpDelete]
-    public async Task<IActionResult> DeleteFile(string fileName) {
+    public async Task<IActionResult> DeleteFile(Guid id, string fileName) {
 
-        var logToDelete = await _appointmentsCollection.Find(s => s.Id == id).FirstOrDefaultAsync();
-        if (logToDelete == null) {
-            return BadRequest("Appointment does not exist");
+        var existingFile = await _PageMediaCollection.FindAsync(s=>s.Id == id);
+        if (existingFile == null) {
+            return BadRequest("Page not found");
         }
-        
-        await _appointmentsCollection.DeleteOneAsync(s => s.Id == id);
+
+        //Dessa page, encontra o arquivo
+
+        //Se nao existir, notfound()
+
+        //Se existir, deleta
+
+        //Verifica se a page ainda tem files. Se nao tem, apaga
+
         return NoContent();
     }
-
 }
