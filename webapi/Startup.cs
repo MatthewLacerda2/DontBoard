@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using Microsoft.AspNetCore.RateLimiting;
+using System.Threading.RateLimiting;
 using MongoDB.Driver;
 
 namespace Server;
@@ -26,9 +28,21 @@ public class Startup {
 
         services.AddControllersWithViews();
 
+        services.AddEndpointsApiExplorer();
+
+        services.AddRateLimiter(_ => _
+            .AddFixedWindowLimiter(policyName: "fixed", options =>
+            {
+                options.PermitLimit = 100;
+                options.Window = TimeSpan.FromSeconds(10);
+                options.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+                options.QueueLimit = 10;
+            }));
+
         // Add Swagger
         services.AddSwaggerGen(c => {
             c.SwaggerDoc("v1", new OpenApiInfo { Title = "BoardAPI", Version = "v1" });
+            c.ResolveConflictingActions(apiDescriptions => apiDescriptions.First());
         });
     }
 
