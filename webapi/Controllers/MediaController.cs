@@ -36,14 +36,12 @@ public class MediaController : ControllerBase {
     [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(string))]
     [HttpGet("{id}")]
     public async Task<IActionResult> ReadPage(Guid id) {
-
-        var _pagemedia = await _PageMediaCollection.FindAsync(s=>s.Id == id);
+        
+        var _pagemedia = await _PageMediaCollection.Find(s => s.Id == id).FirstOrDefaultAsync();
 
         if(_pagemedia==null) {
             return NotFound("Page not found");
         }
-
-        //Retornar as mediafiles
 
         var response = JsonConvert.SerializeObject(_pagemedia.files);
         return Ok(response);
@@ -53,7 +51,7 @@ public class MediaController : ControllerBase {
     [HttpPost]
     public async Task<IActionResult> CreateFile(Guid id, [FromBody] MediaFile newMedia) {
 
-        var _pagemedia = await _PageMediaCollection.FindAsync(s=>s.Id == id);        
+        var _pagemedia = await _PageMediaCollection.Find(s=>s.Id == id).FirstOrDefaultAsync();
 
         if(_pagemedia==null) {
             PageMedia page = new PageMedia();
@@ -61,7 +59,6 @@ public class MediaController : ControllerBase {
             _PageMediaCollection.InsertOne(page);
         }else{
             _pagemedia.files.Add(newMedia);
-            //salvar esse baguio no db
         }
 
         return CreatedAtAction(nameof(CreateFile), newMedia);
