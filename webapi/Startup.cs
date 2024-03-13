@@ -40,6 +40,8 @@ public class Startup {
             app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "BoardAPI v1"));
         }
 
+        app.UseMiddleware<RateLimit>(100, TimeSpan.FromMinutes(1));
+
         app.UseHttpsRedirection();
         app.UseRouting();
         app.UseAuthorization();
