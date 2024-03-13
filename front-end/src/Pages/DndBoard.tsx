@@ -1,14 +1,14 @@
 import React, { useEffect, useState, CSSProperties } from 'react';
-import DndImage from './DndImage';
-import DndVideo from './DndVideo';
-import DndAudio from './DndAudio';
-import DndText from './DndText';
-import { isValidYoutubeLink, isValidImageUrl } from './urlValidator.tsx';
-import DrawingBoard from './Drawer/DrawingBoard.tsx';
-import InputLink from './InputLink.tsx';
-import DndYouTube from './DndYoutube.tsx';
+import DndImage from '../components/DndImage.tsx';
+import DndVideo from '../components/DndVideo.tsx';
+import DndAudio from '../components/DndAudio.tsx';
+import DndText from '../components/DndText.tsx';
+import { isValidYoutubeLink, isValidImageUrl } from '../components/urlValidator.tsx';
+import DrawingBoard from '../components/Drawer/DrawingBoard.tsx';
+import InputLink from '../components/InputLink.tsx';
+import DndYouTube from '../components/DndYoutube.tsx';
 import '../App.css';
-import ButtonUpload from './ButtonUpload.tsx';
+import ButtonUpload from '../components/ButtonUpload.tsx';
 //How many imports? //Yes
 
 interface MediaItem {
@@ -30,9 +30,7 @@ const DndBoard: React.FC = () => {
   const [initialPositions, setInitialPositions] = useState<MediaPosition[]>([]);
   const [dragging, setDragging] = useState<number | null>(null);
   const [selected, setSelected] = useState<number | null>(null);
-
   const [drawingMode, setDrawingMode] = useState(false);
-
   const [isInteractable, setIsInteractable] = useState(true);
 
   useEffect(() => {
