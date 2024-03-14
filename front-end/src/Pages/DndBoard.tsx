@@ -1,12 +1,12 @@
 import React, { useEffect, useState, CSSProperties } from 'react';
-import DndImage from '../components/DndImage.tsx';
-import DndVideo from '../components/DndVideo.tsx';
-import DndAudio from '../components/DndAudio.tsx';
-import DndText from '../components/DndText.tsx';
-import { isValidYoutubeLink, isValidImageUrl } from '../components/urlValidator.tsx';
+import DndImage from '../components/DndComponents/DndImage.tsx';
+import DndVideo from '../components/DndComponents/DndVideo.tsx';
+import DndAudio from '../components/DndComponents/DndAudio.tsx';
+import DndText from '../components/DndComponents/DndText.tsx';
+import { isValidYoutubeLink, isValidImageUrl } from '../Utils/urlValidator.tsx';
 import DrawingBoard from '../components/Drawer/DrawingBoard.tsx';
 import InputLink from '../components/InputLink.tsx';
-import DndYouTube from '../components/DndYoutube.tsx';
+import DndYouTube from '../components/DndComponents/DndYoutube.tsx';
 import '../App.css';
 import ButtonUpload from '../components/ButtonUpload.tsx';
 //How many imports? //Yes
