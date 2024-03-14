@@ -45,7 +45,8 @@ public class MediaController : ControllerBase {
         return Ok(response);
     }
 
-    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(PageMedia))]
+    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(MediaFile))]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [HttpPost]
     public async Task<IActionResult> CreateFile(Guid id, [FromBody] MediaFile newMedia) {
 
