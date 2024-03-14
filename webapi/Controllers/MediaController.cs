@@ -44,6 +44,7 @@ public class MediaController : ControllerBase {
     }
 
     [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(PageMedia))]
+    [ProducesResponseType(StatusCodes.Status403Forbidden, Type = typeof(PageMedia))]
     [HttpPost]
     public async Task<IActionResult> CreateFile(Guid id, [FromBody] MediaFile newMedia) {
 
@@ -54,6 +55,13 @@ public class MediaController : ControllerBase {
             page.files.Add(newMedia);
             _PageMediaCollection.InsertOne(page);
         }else{
+
+            if(_pagemedia.files.Count > 31){
+                return Forbid("Maximum files count reached");
+            }
+
+            //Implement folder size limit as well
+
             _pagemedia.files.Add(newMedia);
         }
 
