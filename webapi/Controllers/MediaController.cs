@@ -39,31 +39,31 @@ public class MediaController : ControllerBase {
             return NotFound("Page not found");
         }
 
+        _pagemedia.lastChangedDate = DateTime.Now;
+
         var response = JsonConvert.SerializeObject(_pagemedia.files);
         return Ok(response);
     }
 
     [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(PageMedia))]
-    [ProducesResponseType(StatusCodes.Status403Forbidden, Type = typeof(PageMedia))]
     [HttpPost]
     public async Task<IActionResult> CreateFile(Guid id, [FromBody] MediaFile newMedia) {
 
         var _pagemedia = await _PageMediaCollection.Find(s=>s.Id == id).FirstOrDefaultAsync();
 
         if(_pagemedia==null) {
-            PageMedia page = new PageMedia();
-            page.files.Add(newMedia);
-            _PageMediaCollection.InsertOne(page);
-        }else{
-
-            if(_pagemedia.files.Count > 31){
-                return Forbid("Maximum files count reached");
-            }
-
-            //Implement folder size limit as well
-
+            _pagemedia = new PageMedia();
             _pagemedia.files.Add(newMedia);
+            _PageMediaCollection.InsertOne(_pagemedia);
         }
+        
+        if(_pagemedia.files.Count > 31){
+            return Forbid("Maximum files count reached");
+        }
+
+        //Implement folder size limit as well
+
+        _pagemedia.AddMediaFile(newMedia);
 
         return CreatedAtAction(nameof(CreateFile), newMedia);
     }
@@ -87,6 +87,8 @@ public class MediaController : ControllerBase {
         //to save on bandwidth.
         //Se existir, atualiza
 
+        //atualiza o 'last changed' da Page
+
         return Ok(updateMedia);
     }
     
@@ -107,6 +109,8 @@ public class MediaController : ControllerBase {
         //Se existir, deleta
 
         //Verifica se a page ainda tem files. Se nao tem, apaga
+
+        //muda o lastchanged da Page
 
         return NoContent();
     }
