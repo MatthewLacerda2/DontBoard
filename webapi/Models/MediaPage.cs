@@ -28,8 +28,22 @@ public class MediaPage {
 
     }
 
-    public void RemoveMediaFile(MediaFile mediaFile){
-        files.Remove(mediaFile);
+    public bool RemoveMediaFile(MediaFile mediaFile){
+        bool wasDelete = files.Remove(mediaFile);
         lastChangedDate = DateTime.UtcNow;
+
+        return wasDelete;
+    }
+
+    public bool UpdateMediaFile(MediaFile mediaFile){
+
+        MediaFile mfToUpdate = files.Find(m=>m.Id == mediaFile.Id);
+        if(mfToUpdate==null){
+            return false;
+        }
+
+        mfToUpdate = mediaFile;
+        lastChangedDate=DateTime.Now;
+        return true;
     }
 }

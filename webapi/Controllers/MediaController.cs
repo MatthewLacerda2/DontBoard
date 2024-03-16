@@ -74,45 +74,40 @@ public class MediaController : ControllerBase {
     [HttpPut]
     public async Task<IActionResult> UpdateFile(Guid id, [FromBody] MediaFile updateMedia) {
 
-        var existingFile = await _PageMediaCollection.FindAsync(s=>s.Id == id);
-        if (existingFile == null) {
+        var existingPage = await _PageMediaCollection.Find(s=>s.Id == id).FirstOrDefaultAsync();
+        if (existingPage == null) {
             return BadRequest("Page not found");
         }
 
-        //Dessa page, encontra o arquivo
+        bool wasFileUpdate = existingPage.UpdateMediaFile(updateMedia);
 
-        //Se nao existir, notfound()
-
-        //We are updating the whole MediaFile here
-        //Would be interesting, if we are dealing with something other than text, to only update the positions and other variables
-        //to save on bandwidth.
-        //Se existir, atualiza
-
-        //atualiza o 'last changed' da Page
-
-        return Ok(updateMedia);
+        if(wasFileUpdate){
+            return Ok(updateMedia);
+        }else{
+            return BadRequest("Media not found");
+        }
     }
     
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(BadRequestObjectResult))]
     [HttpDelete]
-    public async Task<IActionResult> DeleteFile(Guid id, string fileName) {
+    public async Task<IActionResult> DeleteFile(Guid id, MediaFile mediaFile) {
 
-        var existingFile = await _PageMediaCollection.FindAsync(s=>s.Id == id);
-        if (existingFile == null) {
+        var existingPage = await _PageMediaCollection.Find(s=>s.Id == id).FirstOrDefaultAsync();
+        if (existingPage == null) {
             return BadRequest("Page not found");
         }
 
-        //Dessa page, encontra o arquivo
+        bool wasDelete = existingPage.RemoveMediaFile(mediaFile);
 
-        //Se nao existir, notfound()
+        if(existingPage.files.Count == 0){
+            _PageMediaCollection.DeleteOne(p => p.Id == id);
+        }
 
-        //Se existir, deleta
-
-        //Verifica se a page ainda tem files. Se nao tem, apaga
-
-        //muda o lastchanged da Page
-
-        return NoContent();
+        if(wasDelete){
+            return NoContent();
+        }else{
+            return BadRequest("Page not found");
+        }
     }
 }
