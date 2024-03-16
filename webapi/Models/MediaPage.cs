@@ -1,6 +1,6 @@
 namespace Server.Models;
 
-public class PageMedia {
+public class MediaPage {
 
     public Guid Id;
     public DateTime createdDate, lastChangedDate;
@@ -10,10 +10,11 @@ public class PageMedia {
         private set;
     }
 
-    public PageMedia(){
+    public MediaPage(){
         Id = Guid.NewGuid();
         files = new List<MediaFile>();
         createdDate = DateTime.Now;
+        lastChangedDate = DateTime.Now;
     }
 
     public void AddMediaFile(MediaFile mediaFile){
@@ -21,9 +22,14 @@ public class PageMedia {
         if(files==null){
             files = new List<MediaFile>();
         }
-        files.Add(mediaFile);
 
+        files.Add(mediaFile);
         lastChangedDate = DateTime.UtcNow;
 
+    }
+
+    public void RemoveMediaFile(MediaFile mediaFile){
+        files.Remove(mediaFile);
+        lastChangedDate = DateTime.UtcNow;
     }
 }

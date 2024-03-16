@@ -19,16 +19,16 @@ namespace webserver.Controllers;
 [Produces("application/json")]
 public class MediaController : ControllerBase {
 
-    private readonly IMongoCollection<PageMedia> _PageMediaCollection;
+    private readonly IMongoCollection<MediaPage> _PageMediaCollection;
 
     /// <summary>
     /// Controller class for Appointment CRUD requests
     /// </summary>
     public MediaController(IMongoClient mongoClient) {
-        _PageMediaCollection = mongoClient.GetDatabase("mongo_db").GetCollection<PageMedia>("PageMedia");
+        _PageMediaCollection = mongoClient.GetDatabase("mongo_db").GetCollection<MediaPage>("PageMedia");
     }
 
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(MediaFile[]))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(MediaPage[]))]
     [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(string))]
     [HttpGet("{id}")]
     public async Task<IActionResult> ReadPage(Guid id) {
@@ -53,7 +53,7 @@ public class MediaController : ControllerBase {
         var _pagemedia = await _PageMediaCollection.Find(s=>s.Id == id).FirstOrDefaultAsync();
 
         if(_pagemedia==null) {
-            _pagemedia = new PageMedia();
+            _pagemedia = new MediaPage();
             _pagemedia.files.Add(newMedia);
             _PageMediaCollection.InsertOne(_pagemedia);
         }

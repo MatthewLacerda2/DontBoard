@@ -24,7 +24,7 @@ public class Startup {
             return client.GetDatabase("mongo_db");
         });
 
-        services.AddAuthorization();
+        //services.AddAuthorization();
 
         services.AddControllersWithViews();
 
@@ -56,8 +56,8 @@ public class Startup {
 
         app.UseHttpsRedirection();
         app.UseRouting();
-        app.UseAuthorization();
-        app.UseAuthentication();
+        //app.UseAuthorization();
+        //app.UseAuthentication();
 
         app.UseEndpoints(endpoints => {
             endpoints.MapControllers();
