@@ -21,6 +21,7 @@ public class Startup {
         services.AddSingleton<IMongoClient>(new MongoClient(connectionString));
         services.AddSingleton<IMongoDatabase>(provider => {
             var client = provider.GetRequiredService<IMongoClient>();
+            var databaseName = new MongoUrl(connectionString).DatabaseName;
             return client.GetDatabase("mongo_db");
         });
 
@@ -33,8 +34,8 @@ public class Startup {
         services.AddRateLimiter(_ => _
             .AddFixedWindowLimiter(policyName: "fixed", options =>
             {
-                options.PermitLimit = 100;
-                options.Window = TimeSpan.FromSeconds(10);
+                options.PermitLimit = 10;
+                options.Window = TimeSpan.FromSeconds(5);
                 options.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
                 options.QueueLimit = 10;
             }));
