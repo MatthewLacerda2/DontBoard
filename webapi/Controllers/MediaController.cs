@@ -62,9 +62,11 @@ public class MediaController : ControllerBase {
             return Forbid("Maximum files count reached");
         }
 
-        //Implement folder size limit as well
-
         _pagemedia.AddMediaFile(newMedia);
+
+        var filter = Builders<MediaPage>.Filter.Eq(s => s.Id, _pagemedia.Id);
+        var update = Builders<MediaPage>.Update.Set(s => s.files, _pagemedia.files);
+        _PageMediaCollection.UpdateOne(filter, update);
 
         return CreatedAtAction(nameof(CreateFile), newMedia);
     }
