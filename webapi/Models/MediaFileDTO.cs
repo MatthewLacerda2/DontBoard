@@ -1,17 +1,17 @@
 namespace Server.Models;
 
-public class MediaFile {
+public class MediaFileDTO {
 
     public MediaFileType fileType;
     public readonly Guid Id;
-    public string src;
+    public string type;
     public string name;
     public int positionX, positionY;
 
-    public MediaFile(MediaFileType _fileType, string _src, string _name, int x, int y){
+    public MediaFileDTO(MediaFileType _fileType, string _type, string _name, int x, int y){
         Id = Guid.NewGuid();
         fileType = _fileType;
-        src = _src;
+        type = _type;
         name = _name;
         positionX = x;
         positionY = y;

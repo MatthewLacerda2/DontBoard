@@ -1,5 +1,5 @@
 namespace Server.Models;
 
-public enum mediaFileType {
+public enum MediaFileType {
     image, video, audio, text, youtube
 }

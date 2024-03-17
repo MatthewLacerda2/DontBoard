@@ -28,12 +28,12 @@ public class MediaController : ControllerBase {
         _PageMediaCollection = mongoClient.GetDatabase("mongo_db").GetCollection<MediaPage>("PageMedia");
     }
 
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(MediaPage[]))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(MediaFile[]))]
     [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(string))]
     [HttpGet("{id}")]
-    public async Task<IActionResult> ReadPage(Guid id) {
+    public async Task<IActionResult> ReadPage(Guid pageId) {
         
-        var _pagemedia = await _PageMediaCollection.Find(s => s.Id == id).FirstOrDefaultAsync();
+        var _pagemedia = await _PageMediaCollection.Find(s => s.Id == pageId).FirstOrDefaultAsync();
 
         if(_pagemedia==null) {
             return NotFound("Page not found");
@@ -48,9 +48,9 @@ public class MediaController : ControllerBase {
     [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(MediaFile))]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [HttpPost]
-    public async Task<IActionResult> CreateFile(Guid id, [FromBody] MediaFile newMedia) {
+    public async Task<IActionResult> CreateFile(Guid pageId, [FromBody] MediaFile newMedia) {
 
-        var _pagemedia = await _PageMediaCollection.Find(s=>s.Id == id).FirstOrDefaultAsync();
+        var _pagemedia = await _PageMediaCollection.Find(s=>s.Id == pageId).FirstOrDefaultAsync();
 
         if(_pagemedia==null) {
             _pagemedia = new MediaPage();
@@ -74,9 +74,9 @@ public class MediaController : ControllerBase {
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(MediaFile))]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
     [HttpPut]
-    public async Task<IActionResult> UpdateFile(Guid id, [FromBody] MediaFile updateMedia) {
+    public async Task<IActionResult> UpdateFile(Guid pageId, [FromBody] MediaFile updateMedia) {
 
-        var existingPage = await _PageMediaCollection.Find(s=>s.Id == id).FirstOrDefaultAsync();
+        var existingPage = await _PageMediaCollection.Find(s=>s.Id == pageId).FirstOrDefaultAsync();
         if (existingPage == null) {
             return BadRequest("Page not found");
         }
