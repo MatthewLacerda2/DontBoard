@@ -1,0 +1,24 @@
+namespace Server.Models;
+
+public class MediaFileDTO {
+
+    public MediaFileType fileType;
+    public readonly Guid Id;
+    public string name;
+    public string type;
+    public int positionX, positionY;
+
+    public MediaFileDTO(MediaFileType _fileType, string _name, string _type, int x, int y){
+        fileType = _fileType;
+        name = _name;
+        type = _type;
+        positionX = x;
+        positionY = y;
+
+        Id = Guid.NewGuid();
+    }
+
+    public static explicit operator MediaFileDTO(MediaFile file){
+        return new MediaFileDTO(MediaFileType.File, file.name, file.type, file.positionX, file.positionY);
+    }
+}
