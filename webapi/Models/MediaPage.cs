@@ -2,16 +2,16 @@ namespace Server.Models;
 
 public class MediaPage {
 
-    public Guid Id;
     public DateTime createdDate, lastChangedDate;
+    public string name;
 
     public List<MediaFile> files{
         get;
         private set;
     }
 
-    public MediaPage(){
-        Id = Guid.NewGuid();
+    public MediaPage(string _name){
+        name = _name;
         files = new List<MediaFile>();
         createdDate = DateTime.Now;
         lastChangedDate = DateTime.Now;
@@ -35,14 +35,16 @@ public class MediaPage {
         return wasDelete;
     }
 
-    public bool UpdateMediaFile(MediaFile mediaFile){
+    public bool UpdateMediaFile(MediaFileDTO mediaFile){
 
-        MediaFile mfToUpdate = files.Find(m=>m.Id == mediaFile.Id);
+        MediaFile mfToUpdate = files.Find(m=>m.Name == mediaFile.Name)!;
         if(mfToUpdate==null){
             return false;
         }
 
-        mfToUpdate = mediaFile;
+        mfToUpdate.positionX = mediaFile.positionX;
+        mfToUpdate.positionY = mediaFile.positionY;
+        
         lastChangedDate=DateTime.Now;
         return true;
     }
