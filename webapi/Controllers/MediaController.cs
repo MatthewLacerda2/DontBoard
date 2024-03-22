@@ -21,6 +21,8 @@ public class MediaController : ControllerBase {
 
     private readonly IMongoCollection<MediaPage> _PageMediaCollection;
 
+    public static string MediaPagesFolder = "MediaPages";
+
     /// <summary>
     /// Controller class for Appointment CRUD requests
     /// </summary>
@@ -62,19 +64,15 @@ public class MediaController : ControllerBase {
             return Forbid("Maximum files count reached");
         }
 
-        //-----------
+        string imagePath = Path.Combine(MediaPagesFolder + pageName, newMedia.Name);
 
-        //se for imagem, converte pra jpg
-
-        //checar se a pasta existe. se nao existir, cria ela
-
-        string imagePath = Path.Combine($"/{pageName}", newMedia.Name);
+        if (!Directory.Exists(pageName)){
+            Directory.CreateDirectory(pageName);
+        }
 
         byte[] imageBytes = Convert.FromBase64String(newMedia.Src.Split(',')[1]);
 
         System.IO.File.WriteAllBytes(imagePath, imageBytes);
-
-        //--------
 
         _pagemedia.AddMediaFile(newMedia);
 
