@@ -1,11 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Server.Models;
 using MongoDB.Driver;
 using Newtonsoft.Json;
-using MongoDB.Bson;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace webserver.Controllers;
 
@@ -23,43 +19,66 @@ namespace webserver.Controllers;
 [Produces("application/json")]
 public class MediaController : ControllerBase {
 
-    private readonly IMongoCollection<PageMedia> _PageMediaCollection;
+    private readonly IMongoCollection<MediaPage> _PageMediaCollection;
+
+    public static string MediaPagesFolder = "MediaPages";
 
     /// <summary>
     /// Controller class for Appointment CRUD requests
     /// </summary>
     public MediaController(IMongoClient mongoClient) {
-        _PageMediaCollection = mongoClient.GetDatabase("mongo_db").GetCollection<PageMedia>("PageMedia");
+        _PageMediaCollection = mongoClient.GetDatabase("mongo_db").GetCollection<MediaPage>("PageMedia");
     }
 
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(MediaFile[]))]
     [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(string))]
     [HttpGet("{id}")]
-    public async Task<IActionResult> ReadPage(Guid id) {
+    public async Task<IActionResult> ReadPage(string pageName) {
         
-        var _pagemedia = await _PageMediaCollection.Find(s => s.Id == id).FirstOrDefaultAsync();
+        var _pagemedia = await _PageMediaCollection.Find(s => s.name == pageName).FirstOrDefaultAsync();
 
         if(_pagemedia==null) {
             return NotFound("Page not found");
         }
 
+        _pagemedia.lastChangedDate = DateTime.Now;
+
         var response = JsonConvert.SerializeObject(_pagemedia.files);
         return Ok(response);
     }
 
-    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(PageMedia))]
+    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(MediaFile))]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [HttpPost]
-    public async Task<IActionResult> CreateFile(Guid id, [FromBody] MediaFile newMedia) {
+    public async Task<IActionResult> CreateFile(string pageName, [FromBody] MediaFile newMedia) {
 
-        var _pagemedia = await _PageMediaCollection.Find(s=>s.Id == id).FirstOrDefaultAsync();
+        var _pagemedia = await _PageMediaCollection.Find(s=>s.name == pageName).FirstOrDefaultAsync();
 
         if(_pagemedia==null) {
-            PageMedia page = new PageMedia();
-            page.files.Add(newMedia);
-            _PageMediaCollection.InsertOne(page);
-        }else{
+            _pagemedia = new MediaPage(pageName);
             _pagemedia.files.Add(newMedia);
+            _PageMediaCollection.InsertOne(_pagemedia);
         }
+        
+        if(_pagemedia.files.Count > 31){
+            return Forbid("Maximum files count reached");
+        }
+
+        string imagePath = Path.Combine(MediaPagesFolder + pageName, newMedia.Name);
+
+        if (!Directory.Exists(pageName)){
+            Directory.CreateDirectory(pageName);
+        }
+
+        byte[] imageBytes = Convert.FromBase64String(newMedia.Src.Split(',')[1]);
+
+        System.IO.File.WriteAllBytes(imagePath, imageBytes);
+
+        _pagemedia.AddMediaFile(newMedia);
+
+        var filter = Builders<MediaPage>.Filter.Eq(s => s.name, _pagemedia.name);
+        var update = Builders<MediaPage>.Update.Set(s => s.files, _pagemedia.files);
+        _PageMediaCollection.UpdateOne(filter, update);
 
         return CreatedAtAction(nameof(CreateFile), newMedia);
     }
@@ -67,43 +86,42 @@ public class MediaController : ControllerBase {
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(MediaFile))]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
     [HttpPut]
-    public async Task<IActionResult> UpdateFile(Guid id, [FromBody] MediaFile updateMedia) {
+    public async Task<IActionResult> UpdateFile(string pageName, [FromBody] MediaFileDTO updateMedia) {
 
-        var existingFile = await _PageMediaCollection.FindAsync(s=>s.Id == id);
-        if (existingFile == null) {
+        var existingPage = await _PageMediaCollection.Find(s=>s.name == pageName).FirstOrDefaultAsync();
+        if (existingPage == null) {
             return BadRequest("Page not found");
         }
 
-        //Dessa page, encontra o arquivo
+        bool wasFileUpdate = existingPage.UpdateMediaFile(updateMedia);
 
-        //Se nao existir, notfound()
-
-        //We are updating the whole MediaFile here
-        //Would be interesting, if we are dealing with something other than text, to only update the positions and other variables
-        //to save on bandwidth.
-        //Se existir, atualiza
-
-        return Ok(updateMedia);
+        if(wasFileUpdate){
+            return Ok(updateMedia);
+        }else{
+            return BadRequest("Media not found");
+        }
     }
     
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(BadRequestObjectResult))]
     [HttpDelete]
-    public async Task<IActionResult> DeleteFile(Guid id, string fileName) {
+    public async Task<IActionResult> DeleteFile(string pageName, MediaFile mediaFile) {
 
-        var existingFile = await _PageMediaCollection.FindAsync(s=>s.Id == id);
-        if (existingFile == null) {
+        var existingPage = await _PageMediaCollection.Find(s=>s.name == pageName).FirstOrDefaultAsync();
+        if (existingPage == null) {
             return BadRequest("Page not found");
         }
 
-        //Dessa page, encontra o arquivo
+        bool wasDelete = existingPage.RemoveMediaFile(mediaFile);
 
-        //Se nao existir, notfound()
+        if(existingPage.files.Count == 0){
+            _PageMediaCollection.DeleteOne(s=>s.name == pageName);
+        }
 
-        //Se existir, deleta
-
-        //Verifica se a page ainda tem files. Se nao tem, apaga
-
-        return NoContent();
+        if(wasDelete){
+            return NoContent();
+        }else{
+            return BadRequest("Page not found");
+        }
     }
 }

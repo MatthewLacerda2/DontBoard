@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using Microsoft.AspNetCore.RateLimiting;
+using System.Threading.RateLimiting;
 using MongoDB.Driver;
 
 namespace Server;
@@ -19,16 +21,29 @@ public class Startup {
         services.AddSingleton<IMongoClient>(new MongoClient(connectionString));
         services.AddSingleton<IMongoDatabase>(provider => {
             var client = provider.GetRequiredService<IMongoClient>();
+            var databaseName = new MongoUrl(connectionString).DatabaseName;
             return client.GetDatabase("mongo_db");
         });
 
-        services.AddAuthorization();
+        //services.AddAuthorization();
 
         services.AddControllersWithViews();
+
+        services.AddEndpointsApiExplorer();
+
+        services.AddRateLimiter(_ => _
+            .AddFixedWindowLimiter(policyName: "fixed", options =>
+            {
+                options.PermitLimit = 10;
+                options.Window = TimeSpan.FromSeconds(5);
+                options.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+                options.QueueLimit = 10;
+            }));
 
         // Add Swagger
         services.AddSwaggerGen(c => {
             c.SwaggerDoc("v1", new OpenApiInfo { Title = "BoardAPI", Version = "v1" });
+            c.ResolveConflictingActions(apiDescriptions => apiDescriptions.First());
         });
     }
 
@@ -42,8 +57,8 @@ public class Startup {
 
         app.UseHttpsRedirection();
         app.UseRouting();
-        app.UseAuthorization();
-        app.UseAuthentication();
+        //app.UseAuthorization();
+        //app.UseAuthentication();
 
         app.UseEndpoints(endpoints => {
             endpoints.MapControllers();
